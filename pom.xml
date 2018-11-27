@@ -9,6 +9,8 @@
     <version>1.0-SNAPSHOT</version>
     <modules>
         <module>tms-admin</module>
+        <module>tms-executor</module>
+        <module>tms-core</module>
     </modules>
     <packaging>pom</packaging>
 
