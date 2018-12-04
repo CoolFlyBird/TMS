@@ -5,6 +5,7 @@ import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.util.StringUtils;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -116,10 +117,8 @@ public class ShellExecUtil {
      * @param privateKey
      * @param passphrase
      * @param command    执行命令
-     * @param isGetMes   是否返回命令执行的结果
      */
-    public static String sshExecCmd(String ip, String user, String pwd, int port,
-                                    String privateKey, String passphrase, String command, boolean isGetMes) throws Exception {
+    public static String sshExecCmd(String ip, String user, String pwd, int port, String privateKey, String passphrase, String command) throws Exception {
 
         //获取ssh连接会话
         Session session = sshConnect(ip, user, pwd, port,
@@ -129,38 +128,45 @@ public class ShellExecUtil {
             log.error("创建ssh连接失败");
             throw new RuntimeException("创建ssh连接失败");
         }
-
+        System.out.println(command);
 
         ChannelExec openChannel = null;
-
         openChannel = (ChannelExec) session.openChannel("exec");
-        System.out.println(command);
+//        openChannel.setExtOutputStream(System.err);
         openChannel.setCommand(command);
-//        int exitStatus = openChannel.getExitStatus();
-//        System.out.println(exitStatus);
         openChannel.connect(10000);
 
         InputStream in = openChannel.getInputStream();
+        InputStream extIn = openChannel.getExtInputStream();
+
+        String exit = "";
+        String result = "";
+
         BufferedReader reader = new BufferedReader(new InputStreamReader(in));
         String buf = null;
-
-        String result = "";
         while ((buf = reader.readLine()) != null) {
             result += buf.toString() + "\n";//new String(buf.getBytes("gbk"),"UTF-8") + "\n";
         }
-        log.info(result);
-        //System.out.println(result);
+
+        BufferedReader extReader = new BufferedReader(new InputStreamReader(extIn));
+        String extBuf = null;
+        while ((extBuf = extReader.readLine()) != null) {
+            exit += extBuf.toString() + "\n";//new String(buf.getBytes("gbk"),"UTF-8") + "\n";
+        }
+
+        exit = exit.trim().replaceAll("\\s{1,}", " ");
+        result = result.trim().replaceAll("\\s{1,}", " ");
+        log.info("exit:" + exit);
+        log.info("result:" + result);
 
         //断开连接
         openChannel.disconnect();
         sshDisconnect(session);
 
-        if (isGetMes) {
-            return result;
-        } else {
-            return "";
+        if (StringUtils.isEmpty(result)) {
+            result = exit;
         }
-
+        return result;
     }
 
 
@@ -168,7 +174,7 @@ public class ShellExecUtil {
         try {
             //空格->%20
             //&->%26
-            String execCmdResult = sshExecCmd("192.168.15.61", "bebepay", "bebepay", 4022, null, null, "/home/bebepay/bebepayplatform/send_dxw_lol.sh && /home/bebepay/bebepayplatform/rupdate_dxw_lol.sh", true);
+            String execCmdResult = sshExecCmd("192.168.15.61", "bebepay", "bebepay", 4022, null, null, "/home/bebepay/bebepayplatform/send_dxw_lol.sh && /home/bebepay/bebepayplatform/rupdate_dxw_lol.sh");
             System.out.println(execCmdResult);
 //            String execCmdResult = sshExecCmd("192.168.15.10", "root", "111111", 22, null, null, "/home/bebepay/bebepayplatform/publish_dev_lol.sh", true);
 //            System.out.println(execCmdResult);
