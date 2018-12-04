@@ -10,6 +10,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>tms-admin</artifactId>
+    <packaging>war</packaging>
+
     <dependencies>
         <dependency>
             <groupId>com.kangcenet</groupId>
