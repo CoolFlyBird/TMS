@@ -1,5 +1,6 @@
 package com.kangcenet.tms.admin.controller;
 
+import com.kangcenet.tms.admin.core.thread.JobTriggerPoolHelper;
 import com.kangcenet.tms.core.biz.model.Return;
 import com.kangcenet.tms.core.util.ShellExecUtil;
 import org.springframework.stereotype.Controller;
@@ -26,7 +27,7 @@ public class JobInfoController {
         Return<String> result = null;
         String type = params.get("type");
         if ("api".equals(type)) {
-
+            JobTriggerPoolHelper.trigger(0, "");
         } else if ("command".equals(type)) {
             String user = params.get("user");
             String pwd = params.get("password");

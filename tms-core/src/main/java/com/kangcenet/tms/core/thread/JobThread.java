@@ -5,6 +5,7 @@ import com.kangcenet.tms.core.biz.model.TriggerParam;
 import com.kangcenet.tms.core.handler.IJobHandler;
 
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 public class JobThread extends Thread {
     private int jobId;
@@ -19,7 +20,6 @@ public class JobThread extends Thread {
     public JobThread(int jobId, IJobHandler handler) {
         this.jobId = jobId;
         this.handler = handler;
-
         this.triggerQueue = new LinkedBlockingQueue<TriggerParam>();
     }
 
@@ -67,8 +67,44 @@ public class JobThread extends Thread {
 
         }
 
-        while (!toStop){
+        while (!toStop) {
             running = false;
+            TriggerParam triggerParam = null;
+            Return<String> executeResult = null;
+
+            try {
+                // to check toStop signal, we need cycle, so wo cannot use queue.take(), instand of poll(timeout)
+                triggerParam = triggerQueue.poll(3L, TimeUnit.SECONDS);
+                if (triggerParam != null) {
+                    running = true;
+                    // log filename, like "logPath/yyyy-MM-dd/9999.log"
+//                    String logFileName = XxlJobFileAppender.makeLogFileName(new Date(triggerParam.getLogDateTim()), triggerParam.getLogId());
+//                    XxlJobFileAppender.contextHolder.set(logFileName);
+//                    ShardingUtil.setShardingVo(new ShardingUtil.ShardingVO(triggerParam.getBroadcastIndex(), triggerParam.getBroadcastTotal()));
+
+                    // execute
+//                    if (triggerParam.getExecutorTimeout() > 0)
+                    executeResult = handler.execute(triggerParam.getExecutorParams());
+
+                    if (executeResult == null) {
+                        executeResult = IJobHandler.FAIL;
+                    }
+                }
+            } catch (Throwable e) {
+
+            } finally {
+                if (triggerParam != null) {
+                    if (!toStop) {
+                        // common
+//                        TriggerCallbackThread.pushCallBack(new HandleCallbackParam(triggerParam.getLogId(), triggerParam.getLogDateTim(), executeResult));
+                    } else {
+                        // is killed
+//                        Return<String> stopResult = new Return<String>(Return.FAIL_CODE, stopReason + " [job running，killed]");
+//                        TriggerCallbackThread.pushCallBack(new HandleCallbackParam(triggerParam.getLogId(), triggerParam.getLogDateTim(), stopResult));
+                    }
+
+                }
+            }
         }
     }
 }
