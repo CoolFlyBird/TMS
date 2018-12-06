@@ -2,7 +2,7 @@ package com.kangcenet.tms.core.handler;
 
 import com.kangcenet.tms.core.biz.model.Return;
 
-public abstract class IJobHandler {
+public abstract class IJobHandler<T> {
     /** success */
     public static final Return<String> SUCCESS = new Return<String>(1000, null);
     /** fail */
@@ -16,7 +16,7 @@ public abstract class IJobHandler {
      * @return
      * @throws Exception
      */
-    public abstract Return<String> execute(String param) throws Exception;
+    public abstract Return<String> execute(T param) throws Exception;
 
     /**
      * init handler, invoked when JobThread init

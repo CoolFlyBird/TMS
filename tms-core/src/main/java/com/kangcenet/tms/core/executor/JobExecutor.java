@@ -26,10 +26,10 @@ public class JobExecutor implements ApplicationContextAware {
         initJobHandlerRepository(applicationContext);
     }
 
-    public void destroy(){
+    public void destroy() {
         // destory JobThreadRepository
         if (JobThreadRepository.size() > 0) {
-            for (Map.Entry<Integer, JobThread> item: JobThreadRepository.entrySet()) {
+            for (Map.Entry<Integer, JobThread> item : JobThreadRepository.entrySet()) {
                 removeJobThread(item.getKey(), "web container destroy and kill the job.");
             }
             JobThreadRepository.clear();
@@ -43,13 +43,16 @@ public class JobExecutor implements ApplicationContextAware {
 
     // ---------------------- job handler repository ----------------------
     private static ConcurrentHashMap<String, IJobHandler> jobHandlerRepository = new ConcurrentHashMap<String, IJobHandler>();
+
     public static IJobHandler registerJobHandler(String name, IJobHandler jobHandler) {
 //        logger.info(">>>>>>>>>>> xxl-job register jobhandler success, name:{}, jobHandler:{}", name, jobHandler);
         return jobHandlerRepository.put(name, jobHandler);
     }
+
     public static IJobHandler loadJobHandler(String name) {
         return jobHandlerRepository.get(name);
     }
+
     private static void initJobHandlerRepository(ApplicationContext applicationContext) {
         if (applicationContext == null) {
             return;
@@ -60,6 +63,7 @@ public class JobExecutor implements ApplicationContextAware {
             for (Object serviceBean : serviceBeanMap.values()) {
                 if (serviceBean instanceof IJobHandler) {
                     String name = serviceBean.getClass().getAnnotation(JobHandler.class).value();
+                    System.err.println("register:" + name);
                     IJobHandler handler = (IJobHandler) serviceBean;
                     if (loadJobHandler(name) != null) {
                         throw new RuntimeException("job handler naming conflicts.");
@@ -73,25 +77,28 @@ public class JobExecutor implements ApplicationContextAware {
 
     // ---------------------- job thread repository ----------------------
     private static ConcurrentHashMap<Integer, JobThread> JobThreadRepository = new ConcurrentHashMap<Integer, JobThread>();
-    public static JobThread registerJobThread(int jobId, IJobHandler handler, String removeOldReason){
+
+    public static JobThread registerJobThread(int jobId, IJobHandler handler, String removeOldReason) {
         JobThread newJobThread = new JobThread(jobId, handler);
         newJobThread.start();
 //        logger.info(">>>>>>>>>>> xxl-job regist JobThread success, jobId:{}, handler:{}", new Object[]{jobId, handler});
-        JobThread oldJobThread = JobThreadRepository.put(jobId, newJobThread);	// putIfAbsent | oh my god, map's put method return the old value!!!
+        JobThread oldJobThread = JobThreadRepository.put(jobId, newJobThread);    // putIfAbsent | oh my god, map's put method return the old value!!!
         if (oldJobThread != null) {
             oldJobThread.toStop(removeOldReason);
             oldJobThread.interrupt();
         }
         return newJobThread;
     }
-    public static void removeJobThread(int jobId, String removeOldReason){
+
+    public static void removeJobThread(int jobId, String removeOldReason) {
         JobThread oldJobThread = JobThreadRepository.remove(jobId);
         if (oldJobThread != null) {
             oldJobThread.toStop(removeOldReason);
             oldJobThread.interrupt();
         }
     }
-    public static JobThread loadJobThread(int jobId){
+
+    public static JobThread loadJobThread(int jobId) {
         JobThread jobThread = JobThreadRepository.get(jobId);
         return jobThread;
     }

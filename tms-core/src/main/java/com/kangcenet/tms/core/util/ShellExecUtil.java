@@ -24,7 +24,7 @@ public class ShellExecUtil {
      * @param privateKey
      * @param passphrase
      */
-    public static Session sshConnect(String ip, String user, String pwd, int port,
+    private static Session sshConnect(String ip, String user, String pwd, int port,
                                      String privateKey, String passphrase) throws Exception {
 
 
@@ -96,7 +96,7 @@ public class ShellExecUtil {
      *
      * @param session
      */
-    public static void sshDisconnect(Session session) throws Exception {
+    private static void sshDisconnect(Session session) throws Exception {
 
         if (null == session) {
             log.error("ssh session is null,关闭session异常");

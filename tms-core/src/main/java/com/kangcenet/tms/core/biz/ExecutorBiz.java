@@ -7,8 +7,10 @@ public interface ExecutorBiz {
 
     /**
      * run
+     *
      * @param triggerParam
      * @return
      */
+//    Return<String> run(TriggerParam triggerParam);
     Return<String> run(TriggerParam triggerParam);
 }

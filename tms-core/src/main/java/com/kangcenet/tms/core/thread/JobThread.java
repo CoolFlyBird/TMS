@@ -84,8 +84,7 @@ public class JobThread extends Thread {
 
                     // execute
 //                    if (triggerParam.getExecutorTimeout() > 0)
-                    executeResult = handler.execute(triggerParam.getExecutorParams());
-
+                    executeResult = handler.execute(triggerParam.getCommand());
                     if (executeResult == null) {
                         executeResult = IJobHandler.FAIL;
                     }
@@ -93,6 +92,7 @@ public class JobThread extends Thread {
             } catch (Throwable e) {
 
             } finally {
+                System.err.println("executeResult:" + executeResult);
                 if (triggerParam != null) {
                     if (!toStop) {
                         // common
@@ -105,6 +105,24 @@ public class JobThread extends Thread {
 
                 }
             }
+        }
+
+        // callback trigger request in queue
+        while (triggerQueue != null && triggerQueue.size() > 0) {
+            TriggerParam triggerParam = triggerQueue.poll();
+            if (triggerParam != null) {
+                // is killed
+                Return<String> stopResult = new Return<String>(Return.FAIL_CODE, stopReason + " [job not executed, in the job queue, killed.]");
+                System.err.println("stopResult:" + stopResult);
+//                TriggerCallbackThread.pushCallBack(new HandleCallbackParam(triggerParam.getLogId(), triggerParam.getLogDateTim(), stopResult));
+            }
+        }
+
+        // destroy
+        try {
+            handler.destroy();
+        } catch (Throwable e) {
+//            logger.error(e.getMessage(), e);
         }
     }
 }
