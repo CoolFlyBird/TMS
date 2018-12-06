@@ -1,8 +1,12 @@
 package com.kangcenet.tms.admin.controller;
 
+import com.kangcenet.tms.admin.core.jobbean.ExecJobBean;
 import com.kangcenet.tms.admin.core.model.JobInfo;
+import com.kangcenet.tms.admin.core.schedule.JobScheduler;
 import com.kangcenet.tms.admin.service.JobService;
 import com.kangcenet.tms.core.biz.model.Return;
+import org.quartz.*;
+import org.quartz.impl.StdSchedulerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,6 +41,17 @@ public class JobInfoController {
             result = xxlJobService.add(jobInfo);
         } catch (Exception e) {
             result = new Return<String>(e.getMessage());
+            e.printStackTrace();
+        }
+
+        Scheduler scheduler = JobScheduler.scheduler;
+        JobDetail job = JobBuilder.newJob(ExecJobBean.class).withIdentity("myJob3").build();
+        Trigger trigger = TriggerBuilder.newTrigger().withIdentity("trigger3", "group3").startNow()
+                .withSchedule(SimpleScheduleBuilder.simpleSchedule().withIntervalInSeconds(40).withRepeatCount(10)).build();
+        try {
+            scheduler.scheduleJob(job, trigger);
+            scheduler.start();
+        } catch (SchedulerException e) {
             e.printStackTrace();
         }
         return result;

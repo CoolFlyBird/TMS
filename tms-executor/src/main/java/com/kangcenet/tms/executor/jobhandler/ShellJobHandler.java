@@ -4,7 +4,8 @@ import com.kangcenet.tms.core.biz.model.Return;
 import com.kangcenet.tms.core.handler.IJobHandler;
 
 public class ShellJobHandler extends IJobHandler {
-    public Return<String> execute(String param) throws Exception {
+
+    public Return<String> execute(Object param) throws Exception {
         return null;
     }
 }

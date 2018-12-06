@@ -16,7 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class JobScheduler implements ApplicationContextAware {
     // scheduler
-    private static Scheduler scheduler;
+    public static Scheduler scheduler;
 
     public void setScheduler(Scheduler scheduler) {
         JobScheduler.scheduler = scheduler;
@@ -39,7 +39,7 @@ public class JobScheduler implements ApplicationContextAware {
 
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
 //        XxlJobDynamicScheduler.xxlJobLogDao = applicationContext.getBean(XxlJobLogDao.class);
-//        XxlJobDynamicScheduler.xxlJobInfoDao = applicationContext.getBean(XxlJobInfoDao.class);
+        JobScheduler.jobInfoDao = applicationContext.getBean(JobInfoDao.class);
 //        XxlJobDynamicScheduler.xxlJobRegistryDao = applicationContext.getBean(XxlJobRegistryDao.class);
 //        XxlJobDynamicScheduler.xxlJobGroupDao = applicationContext.getBean(XxlJobGroupDao.class);
 //        XxlJobDynamicScheduler.adminBiz = applicationContext.getBean(AdminBiz.class);
@@ -103,14 +103,13 @@ public class JobScheduler implements ApplicationContextAware {
         CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule(cronExpression).withMisfireHandlingInstructionDoNothing();
         CronTrigger cronTrigger = TriggerBuilder.newTrigger().withIdentity(triggerKey).withSchedule(cronScheduleBuilder).build();
 
-        // JobDetail : jobClass
-        Class<? extends Job> jobClass_ = ExecJobBean.class;   // Class.forName(jobInfo.getJobClass());
+        Class<? extends Job> jobClass_ = ExecJobBean.class;
         // 使用quartz框架，定时触发
         // JobTriggerPoolHelper.trigger(jobId)
 
         JobDetail jobDetail = JobBuilder.newJob(jobClass_).withIdentity(jobKey).build();
-        Date date = scheduler.scheduleJob(jobDetail, cronTrigger);
-        System.err.println("addJob success-->jobDetail:" + jobDetail + " cronTrigger:" + cronTrigger + " date:" + date);
+        scheduler.scheduleJob(jobDetail, cronTrigger);
+        System.err.println("addJob success-->jobDetail:" + jobDetail + " cronTrigger:" + cronTrigger);
         return true;
     }
 
