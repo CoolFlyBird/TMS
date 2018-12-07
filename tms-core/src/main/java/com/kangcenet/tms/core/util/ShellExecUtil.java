@@ -12,6 +12,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 public class ShellExecUtil {
+    private static Session session;
     private static Log log = LogFactory.getLog(ShellExecUtil.class);
 
     /**
@@ -25,9 +26,11 @@ public class ShellExecUtil {
      * @param passphrase
      */
     private static Session sshConnect(String ip, String user, String pwd, int port,
-                                     String privateKey, String passphrase) throws Exception {
+                                      String privateKey, String passphrase) throws Exception {
 
-
+        if (session != null) {
+            return session;
+        }
         //验证主机ip
         if (null == ip || "".equals(ip)) {
             log.error("主机IP为空");
@@ -84,7 +87,7 @@ public class ShellExecUtil {
         session.sendKeepAliveMsg();
         session.setServerAliveCountMax(10000);
 
-
+        ShellExecUtil.session = session;
         //返回会话
         return session;
 
@@ -118,17 +121,18 @@ public class ShellExecUtil {
      * @param passphrase
      * @param command    执行命令
      */
-    public static String sshExecCmd(String ip, String user, String pwd, int port, String privateKey, String passphrase, String command) throws Exception {
+    public static String sshExecCmd(Session s, String ip, String user, String pwd, int port, String privateKey, String passphrase, String command) throws Exception {
 
         //获取ssh连接会话
-        Session session = sshConnect(ip, user, pwd, port,
-                privateKey, passphrase);
-
+        Session session = s;
+        if (session == null) {
+            session = sshConnect(ip, user, pwd, port, privateKey, passphrase);
+        }
         if (null == session) {
             log.error("创建ssh连接失败");
             throw new RuntimeException("创建ssh连接失败");
         }
-        System.out.println(command);
+        log.info(command);
 
         ChannelExec openChannel = null;
         openChannel = (ChannelExec) session.openChannel("exec");
@@ -159,10 +163,9 @@ public class ShellExecUtil {
         log.info("exit:" + exit);
         log.info("result:" + result);
 
-        //断开连接
-        openChannel.disconnect();
-        sshDisconnect(session);
-
+//        //断开连接
+//        openChannel.disconnect();
+//        sshDisconnect(session);
         if (StringUtils.isEmpty(result)) {
             result = exit;
         }
@@ -174,13 +177,13 @@ public class ShellExecUtil {
         try {
             //空格->%20
             //&->%26
-            String execCmdResult = sshExecCmd("192.168.15.61", "bebepay", "bebepay", 4022, null, null, "/home/bebepay/bebepayplatform/send_dxw_lol.sh && /home/bebepay/bebepayplatform/rupdate_dxw_lol.sh");
-            System.out.println(execCmdResult);
+//            String execCmdResult = sshExecCmd("192.168.15.61", "bebepay", "bebepay", 4022, null, null, "/home/bebepay/bebepayplatform/send_dxw_lol.sh && /home/bebepay/bebepayplatform/rupdate_dxw_lol.sh");
+//            System.out.println(execCmdResult);
 //            String execCmdResult = sshExecCmd("192.168.15.10", "root", "111111", 22, null, null, "/home/bebepay/bebepayplatform/publish_dev_lol.sh", true);
 //            System.out.println(execCmdResult);
         } catch (Exception e) {
-            System.out.println(e);
-            e.printStackTrace();
+//            System.out.println(e);
+//            e.printStackTrace();
         }
     }
 }

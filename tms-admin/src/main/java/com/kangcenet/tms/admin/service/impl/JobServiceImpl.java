@@ -32,7 +32,6 @@ public class JobServiceImpl implements JobService {
 //        if (group == null) {
 //            return new Return<String>(Return.FAIL_CODE, "任务组");
 //        }
-        System.err.println("jobCron:" + jobInfo.getJobCron());
         if (!CronExpression.isValidExpression(jobInfo.getJobCron())) {
             return new Return<String>(Return.FAIL_CODE, "定时参数有误");
         }

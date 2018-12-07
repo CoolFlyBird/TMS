@@ -12,6 +12,7 @@ public class ExecutorBizImpl implements ExecutorBiz {
         // load old：jobHandler + jobThread
         JobThread jobThread = JobExecutor.loadJobThread(triggerParam.getJobId());
         IJobHandler jobHandler = jobThread != null ? jobThread.getHandler() : null;
+
         String removeOldReason = null;
         // new jobhandler
         IJobHandler newJobHandler = JobExecutor.loadJobHandler(triggerParam.getExecutorHandler());
@@ -20,9 +21,9 @@ public class ExecutorBizImpl implements ExecutorBiz {
             // change handler, need kill old thread
             removeOldReason = "change job handler ,and terminate the old job thread.";
             jobThread = null;
-            jobHandler = null;
+            System.err.println("change job handler");
         }
-        // valid handler
+
         if (jobHandler == null) {
             jobHandler = newJobHandler;
             if (jobHandler == null) {
@@ -32,8 +33,10 @@ public class ExecutorBizImpl implements ExecutorBiz {
         // replace thread (new or exists invalid)
         if (jobThread == null) {
             jobThread = JobExecutor.registerJobThread(triggerParam.getJobId(), jobHandler, removeOldReason);
+            System.err.println("replace thread jobThread");
         }
         // push data to queue
+
         Return<String> pushResult = jobThread.pushTriggerQueue(triggerParam);
         return pushResult;
     }

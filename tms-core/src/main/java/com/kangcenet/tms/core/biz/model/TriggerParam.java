@@ -1,11 +1,14 @@
 package com.kangcenet.tms.core.biz.model;
 
+import com.jcraft.jsch.Session;
+
 import java.io.Serializable;
 
 public class TriggerParam implements Serializable {
     private int id;
     private int jobId;
 
+    private Session session;
     // execute info
     private String executorHandler;
 
@@ -104,5 +107,13 @@ public class TriggerParam implements Serializable {
 
     public void setPassphrase(String passphrase) {
         this.passphrase = passphrase;
+    }
+
+    public Session getSession() {
+        return session;
+    }
+
+    public void setSession(Session session) {
+        this.session = session;
     }
 }

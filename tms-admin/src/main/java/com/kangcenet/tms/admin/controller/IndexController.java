@@ -1,65 +1,35 @@
 package com.kangcenet.tms.admin.controller;
 
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
+import com.kangcenet.tms.admin.core.jobbean.ExecJobBean;
+import com.kangcenet.tms.admin.core.schedule.JobScheduler;
+import org.quartz.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.lang.reflect.Method;
 import java.util.Map;
 
 @Controller
 @RequestMapping("/")
-public class IndexController implements ApplicationContextAware {
-    private ApplicationContext applicationContext;
-
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = applicationContext;
-    }
+public class IndexController {
 
     @ResponseBody
     @RequestMapping("/")
-    public String index() {
-
-// init job handler action
-        String index = "";
-        Map<String, Object> serviceBeanMap = applicationContext.getBeansWithAnnotation(RequestMapping.class);
-        if (serviceBeanMap != null && serviceBeanMap.size() > 0) {
-            for (Object serviceBean : serviceBeanMap.values()) {
-                String[] value = serviceBean.getClass().getAnnotation(RequestMapping.class).value();
-                for (String v : value) {
-                    index = index + v + "|";
-                }
-                index = index + "-";
-                Method[] methods = serviceBean.getClass().getDeclaredMethods();
-                if (methods != null) {
-                    for (Method method : methods) {
-                        RequestMapping annotation = method.getAnnotation(RequestMapping.class);
-                        if (annotation == null)
-                            continue;
-                        for (Method meth : methods) {
-                            Class<?>[] ps = meth.getParameterTypes();
-                            String pName = "";
-                            for (Class<?> p : ps) {
-                                pName = pName + p + "_";
-                            }
-                            index = index + meth.getName() + ":" + pName + "-";
-
-                        }
-                    }
-                }
-//                if (serviceBean instanceof IJobHandler){
-//                    String name = serviceBean.getClass().getAnnotation(JobHandler.class).value();
-//                    IJobHandler handler = (IJobHandler) serviceBean;
-//                    if (loadJobHandler(name) != null) {
-//                        throw new RuntimeException("xxl-job jobhandler naming conflicts.");
-//                    }
-//                    registJobHandler(name, handler);
-//                }
-            }
-        }
-        return index;
+    public String index(@RequestParam Map<String, String> params) throws SchedulerException {
+//        String id = params.get("id");
+//        String groupId = params.get("groupId");
+//        CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule("*/5 * * * * ?").withMisfireHandlingInstructionDoNothing();
+//        CronTrigger cronTrigger = TriggerBuilder.newTrigger().withIdentity(id).withSchedule(cronScheduleBuilder).build();
+//
+//        JobKey jobKey = new JobKey(id, groupId);
+//        Class<? extends Job> jobClass_ = ExecJobBean.class;
+//        // 使用quartz框架，定时触发
+//        // JobTriggerPoolHelper.trigger(jobId)
+//
+//        JobDetail jobDetail = JobBuilder.newJob(jobClass_).withIdentity(jobKey).build();
+//        JobScheduler.scheduler.scheduleJob(jobDetail, cronTrigger);
+//        System.err.println("addJob success-->jobDetail:" + jobDetail + " cronTrigger:" + cronTrigger);
+        return "index";
     }
 }

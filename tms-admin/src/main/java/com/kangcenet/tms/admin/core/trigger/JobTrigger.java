@@ -7,14 +7,10 @@ import com.kangcenet.tms.core.biz.model.TriggerParam;
 
 public class JobTrigger {
     public static void trigger(int jobId) {
-        System.err.println("trigger" + jobId);
         JobInfo jobInfo = JobScheduler.jobInfoDao.loadById(jobId);
         if (jobInfo == null) {
-            System.err.println("jobInfo:null");
             return;
         }
-        System.err.println("jobInfo:" + jobInfo);
-
 //        XxlJobGroup group = XxlJobDynamicScheduler.xxlJobGroupDao.load(jobInfo.getJobGroup());
         processTrigger(jobInfo);
     }

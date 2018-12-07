@@ -36,22 +36,11 @@ public class JobInfoController {
         Return<String> result = null;
         try {
             jobInfo = parseJobInfo(params);
-            jobInfo.setId(1005);
-            jobInfo.setJobGroup(2005);
+            jobInfo.setId(1006);
+            jobInfo.setJobGroup(2006);
             result = xxlJobService.add(jobInfo);
         } catch (Exception e) {
             result = new Return<String>(e.getMessage());
-            e.printStackTrace();
-        }
-
-        Scheduler scheduler = JobScheduler.scheduler;
-        JobDetail job = JobBuilder.newJob(ExecJobBean.class).withIdentity("myJob3").build();
-        Trigger trigger = TriggerBuilder.newTrigger().withIdentity("trigger3", "group3").startNow()
-                .withSchedule(SimpleScheduleBuilder.simpleSchedule().withIntervalInSeconds(40).withRepeatCount(10)).build();
-        try {
-            scheduler.scheduleJob(job, trigger);
-            scheduler.start();
-        } catch (SchedulerException e) {
             e.printStackTrace();
         }
         return result;
@@ -65,7 +54,6 @@ public class JobInfoController {
         String handler = params.get("handler");
         //时间参数
         String cron = params.get("cron");
-        System.err.println("cron:" + cron);
         //执行机器的地址
         String address = params.get("address");
         //执行接口

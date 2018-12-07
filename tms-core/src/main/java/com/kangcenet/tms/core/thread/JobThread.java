@@ -75,6 +75,8 @@ public class JobThread extends Thread {
             try {
                 // to check toStop signal, we need cycle, so wo cannot use queue.take(), instand of poll(timeout)
                 triggerParam = triggerQueue.poll(3L, TimeUnit.SECONDS);
+
+                System.err.println("JobThread triggerQueue poll:" + triggerParam.getCommand());
                 if (triggerParam != null) {
                     running = true;
                     // log filename, like "logPath/yyyy-MM-dd/9999.log"
@@ -84,15 +86,16 @@ public class JobThread extends Thread {
 
                     // execute
 //                    if (triggerParam.getExecutorTimeout() > 0)
-                    executeResult = handler.execute(triggerParam.getCommand());
+                    System.err.println("executeResult triggerParam:" + triggerParam);
+                    executeResult = handler.execute(triggerParam);
                     if (executeResult == null) {
                         executeResult = IJobHandler.FAIL;
                     }
                 }
             } catch (Throwable e) {
-
+                System.err.println("Throwable:" + e.getMessage());
             } finally {
-                System.err.println("executeResult:" + executeResult);
+//                System.err.println("finally:" + executeResult);
                 if (triggerParam != null) {
                     if (!toStop) {
                         // common
