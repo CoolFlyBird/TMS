@@ -11,7 +11,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.util.Assert;
 
-import java.util.Date;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class JobScheduler implements ApplicationContextAware {
@@ -81,6 +80,52 @@ public class JobScheduler implements ApplicationContextAware {
         return scheduler.checkExists(triggerKey);
     }
 
+
+    /**
+     * pause
+     *
+     * @param jobName
+     * @param jobGroup
+     * @return
+     * @throws SchedulerException
+     */
+    public static boolean pauseJob(String jobName, String jobGroup) throws SchedulerException {
+        // TriggerKey : name + group
+        TriggerKey triggerKey = TriggerKey.triggerKey(jobName, jobGroup);
+        boolean result = false;
+        if (checkExists(jobName, jobGroup)) {
+            scheduler.pauseTrigger(triggerKey);
+            result = true;
+//            logger.info(">>>>>>>>>>> pauseJob success, triggerKey:{}", triggerKey);
+        } else {
+//            logger.info(">>>>>>>>>>> pauseJob fail, triggerKey:{}", triggerKey);
+        }
+        return result;
+    }
+
+    /**
+     * resume
+     *
+     * @param jobName
+     * @param jobGroup
+     * @return
+     * @throws SchedulerException
+     */
+    public static boolean resumeJob(String jobName, String jobGroup) throws SchedulerException {
+        // TriggerKey : name + group
+        TriggerKey triggerKey = TriggerKey.triggerKey(jobName, jobGroup);
+
+        boolean result = false;
+        if (checkExists(jobName, jobGroup)) {
+            scheduler.resumeTrigger(triggerKey);
+            result = true;
+//            logger.info(">>>>>>>>>>> resumeJob success, triggerKey:{}", triggerKey);
+        } else {
+//            logger.info(">>>>>>>>>>> resumeJob fail, triggerKey:{}", triggerKey);
+        }
+        return result;
+    }
+
     /**
      * addJob
      *
@@ -91,7 +136,6 @@ public class JobScheduler implements ApplicationContextAware {
      * @throws SchedulerException
      */
     public static boolean addJob(String jobName, String jobGroup, String cronExpression) throws SchedulerException {
-
         TriggerKey triggerKey = TriggerKey.triggerKey(jobName, jobGroup);
         JobKey jobKey = new JobKey(jobName, jobGroup);
         // TriggerKey valid if_exists
@@ -99,15 +143,12 @@ public class JobScheduler implements ApplicationContextAware {
 //            logger.info(">>>>>>>>> addJob fail, job already exist, jobGroup:{}, jobName:{}", jobGroup, jobName);
             return false;
         }
-
         CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule(cronExpression).withMisfireHandlingInstructionDoNothing();
         CronTrigger cronTrigger = TriggerBuilder.newTrigger().withIdentity(triggerKey).withSchedule(cronScheduleBuilder).build();
-
-        Class<? extends Job> jobClass_ = ExecJobBean.class;
+        Class<? extends Job> jobClass = ExecJobBean.class;
         // 使用quartz框架，定时触发
         // JobTriggerPoolHelper.trigger(jobId)
-
-        JobDetail jobDetail = JobBuilder.newJob(jobClass_).withIdentity(jobKey).build();
+        JobDetail jobDetail = JobBuilder.newJob(jobClass).withIdentity(jobKey).build();
         scheduler.scheduleJob(jobDetail, cronTrigger);
         System.err.println("addJob success-->jobDetail:" + jobDetail + " cronTrigger:" + cronTrigger);
         return true;

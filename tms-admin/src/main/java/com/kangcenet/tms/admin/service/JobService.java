@@ -9,6 +9,7 @@ public interface JobService {
 
     /**
      * page list
+     *
      * @param start
      * @param length
      * @param jobGroup
@@ -43,16 +44,19 @@ public interface JobService {
      */
     Return<String> remove(int id);
 
-//    /**
-//     * pause job
-//     * @param id
-//     * @return
-//     */
-//    Return<String> pause(int id);
-//    /**
-//     * resume job
-//     * @param id
-//     * @return
-//     */
-//    Return<String> resume(int id);
+    /**
+     * pause job
+     *
+     * @param id
+     * @return
+     */
+    Return<String> pause(int id);
+
+    /**
+     * resume job
+     *
+     * @param id
+     * @return
+     */
+    Return<String> resume(int id);
 }

@@ -65,6 +65,34 @@ public class JobServiceImpl implements JobService {
     }
 
     public Return<String> remove(int id) {
+        JobInfo xxlJobInfo = jobInfoDao.loadById(id);
+        String group = String.valueOf(xxlJobInfo.getJobGroup());
+        String name = String.valueOf(xxlJobInfo.getId());
+
+        try {
+            JobScheduler.removeJob(name, group);
+            jobInfoDao.delete(id);
+            xxlJobLogDao.delete(id);
+            return Return.SUCCESS;
+        } catch (SchedulerException e) {
+//            logger.error(e.getMessage(), e);
+        }
+        return Return.FAIL;
+    }
+
+    public Return<String> pause(int id) {
         return null;
+    }
+
+    public Return<String> resume(int id) {
+        JobInfo xxlJobInfo = jobInfoDao.loadById(id);
+        String group = String.valueOf(xxlJobInfo.getJobGroup());
+        String name = String.valueOf(xxlJobInfo.getId());
+        try {
+            boolean ret = JobScheduler.resumeJob(name, group);
+            return ret ? Return.SUCCESS : Return.FAIL;
+        } catch (SchedulerException e) {
+            return Return.FAIL;
+        }
     }
 }

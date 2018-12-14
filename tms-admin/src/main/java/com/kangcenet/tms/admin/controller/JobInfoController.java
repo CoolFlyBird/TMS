@@ -46,6 +46,13 @@ public class JobInfoController {
         return result;
     }
 
+    @RequestMapping("/resume")
+    @ResponseBody
+    public Return<String> resume(int id) {
+        return xxlJobService.resume(id);
+    }
+
+
     private JobInfo parseJobInfo(Map<String, String> params) throws Exception {
         JobInfo jobInfo = new JobInfo();
         //任务描述

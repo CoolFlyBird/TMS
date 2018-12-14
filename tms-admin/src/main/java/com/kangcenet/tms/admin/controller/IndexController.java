@@ -17,19 +17,7 @@ public class IndexController {
     @ResponseBody
     @RequestMapping("/")
     public String index(@RequestParam Map<String, String> params) throws SchedulerException {
-//        String id = params.get("id");
-//        String groupId = params.get("groupId");
-//        CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule("*/5 * * * * ?").withMisfireHandlingInstructionDoNothing();
-//        CronTrigger cronTrigger = TriggerBuilder.newTrigger().withIdentity(id).withSchedule(cronScheduleBuilder).build();
-//
-//        JobKey jobKey = new JobKey(id, groupId);
-//        Class<? extends Job> jobClass_ = ExecJobBean.class;
-//        // 使用quartz框架，定时触发
-//        // JobTriggerPoolHelper.trigger(jobId)
-//
-//        JobDetail jobDetail = JobBuilder.newJob(jobClass_).withIdentity(jobKey).build();
-//        JobScheduler.scheduler.scheduleJob(jobDetail, cronTrigger);
-//        System.err.println("addJob success-->jobDetail:" + jobDetail + " cronTrigger:" + cronTrigger);
+        System.err.println("index()");
         return "index";
     }
 }

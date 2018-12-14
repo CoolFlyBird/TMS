@@ -16,13 +16,15 @@ public class JobExecutor implements ApplicationContextAware {
 
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
+        start();
     }
 
     public static ApplicationContext getApplicationContext() {
         return applicationContext;
     }
 
-    public void start() throws Exception {
+    public void start(){
+        System.err.println("start()");
         initJobHandlerRepository(applicationContext);
     }
 
@@ -65,10 +67,10 @@ public class JobExecutor implements ApplicationContextAware {
                     String name = serviceBean.getClass().getAnnotation(JobHandler.class).value();
                     System.err.println("register:" + name);
                     IJobHandler handler = (IJobHandler) serviceBean;
-                    if (loadJobHandler(name) != null) {
-                        throw new RuntimeException("job handler naming conflicts.");
+                    if (loadJobHandler(name) == null) {
+                        registerJobHandler(name, handler);
+//                        throw new RuntimeException("job handler naming conflicts.");
                     }
-                    registerJobHandler(name, handler);
                 }
             }
         }
