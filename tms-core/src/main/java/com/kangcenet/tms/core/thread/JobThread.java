@@ -8,16 +8,16 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 public class JobThread extends Thread {
-    private int jobId;
+    private String jobId;
     private IJobHandler handler;
-    private LinkedBlockingQueue<TriggerParam> triggerQueue;
+    private volatile LinkedBlockingQueue<TriggerParam> triggerQueue;
 
     private volatile boolean toStop = false;
     private String stopReason;
 
     private boolean running = false;
 
-    public JobThread(int jobId, IJobHandler handler) {
+    public JobThread(String jobId, IJobHandler handler) {
         this.jobId = jobId;
         this.handler = handler;
         this.triggerQueue = new LinkedBlockingQueue<TriggerParam>();
@@ -74,9 +74,11 @@ public class JobThread extends Thread {
 
             try {
                 // to check toStop signal, we need cycle, so wo cannot use queue.take(), instand of poll(timeout)
-                triggerParam = triggerQueue.poll(3L, TimeUnit.SECONDS);
-
-                System.err.println("JobThread triggerQueue poll:" + triggerParam.getCommand());
+                try {
+                    triggerParam = triggerQueue.poll(3L, TimeUnit.SECONDS);
+                } catch (InterruptedException e) {
+                    System.err.println("InterruptedException:" + e.getMessage() + "->" + e);
+                }
                 if (triggerParam != null) {
                     running = true;
                     // log filename, like "logPath/yyyy-MM-dd/9999.log"
@@ -86,13 +88,14 @@ public class JobThread extends Thread {
 
                     // execute
 //                    if (triggerParam.getExecutorTimeout() > 0)
-                    System.err.println("executeResult triggerParam:" + triggerParam);
+                    System.err.println("executeResult triggerParam:" + triggerParam.getJobId() + "->" + triggerParam + ":" + triggerParam.getCommand());
                     executeResult = handler.execute(triggerParam);
                     if (executeResult == null) {
                         executeResult = IJobHandler.FAIL;
                     }
                 }
             } catch (Throwable e) {
+                e.printStackTrace();
                 System.err.println("Throwable:" + e.getMessage());
             } finally {
 //                System.err.println("finally:" + executeResult);

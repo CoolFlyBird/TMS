@@ -6,7 +6,7 @@ import com.kangcenet.tms.core.biz.ExecutorBiz;
 import com.kangcenet.tms.core.biz.model.TriggerParam;
 
 public class JobTrigger {
-    public static void trigger(int jobId) {
+    public static void trigger(String jobId) {
         JobInfo jobInfo = JobScheduler.jobInfoDao.loadById(jobId);
         if (jobInfo == null) {
             return;
@@ -24,11 +24,6 @@ public class JobTrigger {
         triggerParam.setAddress(jobInfo.getAddress());
         triggerParam.setCommand(jobInfo.getCommand());
         triggerParam.setExecutorHandler(jobInfo.getExecutorHandler());
-        triggerParam.setUser(jobInfo.getUser());
-        triggerParam.setPwd(jobInfo.getPwd());
-        triggerParam.setPort(jobInfo.getPort());
-        triggerParam.setPrivateKey(jobInfo.getPrivateKey());
-        triggerParam.setPassphrase(jobInfo.getPassphrase());
         // 3、init address
 //        String address = null;
         // 4、trigger remote executor

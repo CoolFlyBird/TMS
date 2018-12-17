@@ -1,8 +1,8 @@
 package com.kangcenet.tms.admin.core.model;
 
 public class JobInfo {
-    private int id;				// 主键ID	    (JobKey.name)
-    private int jobGroup;		// 执行器主键ID	(JobKey.group)
+    private String id;                // 主键ID	    (JobKey.name)
+    private String jobGroup;        // 执行器主键ID	(JobKey.group)
     //时间参数
     private String jobCron = "";
     //任务描述
@@ -14,23 +14,11 @@ public class JobInfo {
     //执行接口：api 或者 脚本命令
     private String command = "";
 
-    //脚本参数
-    //linux 账号
-    private String user = "";
-    //linux 密码
-    private String pwd = "";
-    //linux shell 端口
-    private int port = 0;
-    //linux 秘钥登录
-    private String privateKey = "";
-    //linux 秘钥短语
-    private String passphrase = "";
-
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -74,51 +62,11 @@ public class JobInfo {
         this.command = command;
     }
 
-    public String getUser() {
-        return user;
-    }
-
-    public void setUser(String user) {
-        this.user = user;
-    }
-
-    public String getPwd() {
-        return pwd;
-    }
-
-    public void setPwd(String pwd) {
-        this.pwd = pwd;
-    }
-
-    public int getPort() {
-        return port;
-    }
-
-    public void setPort(int port) {
-        this.port = port;
-    }
-
-    public String getPrivateKey() {
-        return privateKey;
-    }
-
-    public void setPrivateKey(String privateKey) {
-        this.privateKey = privateKey;
-    }
-
-    public String getPassphrase() {
-        return passphrase;
-    }
-
-    public void setPassphrase(String passphrase) {
-        this.passphrase = passphrase;
-    }
-
-    public int getJobGroup() {
+    public String getJobGroup() {
         return jobGroup;
     }
 
-    public void setJobGroup(int jobGroup) {
+    public void setJobGroup(String jobGroup) {
         this.jobGroup = jobGroup;
     }
 }

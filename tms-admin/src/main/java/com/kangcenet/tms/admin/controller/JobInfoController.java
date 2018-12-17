@@ -1,14 +1,11 @@
 package com.kangcenet.tms.admin.controller;
 
-import com.kangcenet.tms.admin.core.jobbean.ExecJobBean;
 import com.kangcenet.tms.admin.core.model.JobInfo;
-import com.kangcenet.tms.admin.core.schedule.JobScheduler;
 import com.kangcenet.tms.admin.service.JobService;
 import com.kangcenet.tms.core.biz.model.Return;
-import org.quartz.*;
-import org.quartz.impl.StdSchedulerFactory;
+
 import org.springframework.stereotype.Controller;
-import org.springframework.util.StringUtils;
+
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -21,7 +18,7 @@ import java.util.Map;
 public class JobInfoController {
 
     @Resource
-    private JobService xxlJobService;
+    private JobService jobService;
 
     @ResponseBody
     @RequestMapping("/test")
@@ -36,9 +33,7 @@ public class JobInfoController {
         Return<String> result = null;
         try {
             jobInfo = parseJobInfo(params);
-            jobInfo.setId(1006);
-            jobInfo.setJobGroup(2006);
-            result = xxlJobService.add(jobInfo);
+            result = jobService.add(jobInfo);
         } catch (Exception e) {
             result = new Return<String>(e.getMessage());
             e.printStackTrace();
@@ -46,10 +41,47 @@ public class JobInfoController {
         return result;
     }
 
+    @RequestMapping("/update")
+    @ResponseBody
+    public Return<String> update(@RequestParam Map<String, String> params) {
+        JobInfo jobInfo = null;
+        try {
+            jobInfo = parseJobInfo(params);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return jobService.update(jobInfo);
+    }
+
+
+    @RequestMapping("/remove")
+    @ResponseBody
+    public Return<String> remove(@RequestParam Map<String, String> params) {
+        String id = params.get("id");
+
+        return jobService.remove(id);
+    }
+
+    @RequestMapping("/pause")
+    @ResponseBody
+    public Return<String> pause(@RequestParam Map<String, String> params) {
+        String id = params.get("id");
+        return jobService.pause(id);
+    }
+
     @RequestMapping("/resume")
     @ResponseBody
-    public Return<String> resume(int id) {
-        return xxlJobService.resume(id);
+    public Return<String> resume(@RequestParam Map<String, String> params) {
+        String id = params.get("id");
+        return jobService.resume(id);
+    }
+
+    @RequestMapping("/pageList")
+    @ResponseBody
+    public Map<String, Object> pageList(@RequestParam(required = false, defaultValue = "0") int start,
+                                        @RequestParam(required = false, defaultValue = "10") int length,
+                                        String jobGroup, String jobDesc, String executorHandler, String filterTime) {
+        return jobService.pageList(start, length, jobGroup, jobDesc, executorHandler, filterTime);
     }
 
 
@@ -66,26 +98,16 @@ public class JobInfoController {
         //执行接口
         String command = params.get("command");//api/脚本命令
 
-        //脚本参数
-        String user = params.get("user");//linux 账号
-        String pwd = params.get("password");//linux 密码
-        String p = params.get("port");//linux shell 端口
-        int port = 0;
-        if (!StringUtils.isEmpty(p)) {
-            port = Integer.parseInt(p);
-        }
-        String privateKey = params.get("privateKey");//linux 秘钥登录
-        String passphrase = params.get("passphrase");//linux 秘钥短语
+        String id = params.get("id");
+        String jobGroup = params.get("jobGroup");
+
+        jobInfo.setId(id);
+        jobInfo.setJobGroup(jobGroup);
         jobInfo.setJobDesc(desc);
         jobInfo.setExecutorHandler(handler);
         jobInfo.setJobCron(cron);
         jobInfo.setAddress(address);
         jobInfo.setCommand(command);
-        jobInfo.setUser(user);
-        jobInfo.setPwd(pwd);
-        jobInfo.setPort(port);
-        jobInfo.setPrivateKey(privateKey);
-        jobInfo.setPassphrase(passphrase);
         return jobInfo;
     }
 }

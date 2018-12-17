@@ -1,6 +1,5 @@
 package com.kangcenet.tms.admin.jobhandler;
 
-import com.kangcenet.tms.admin.core.model.JobInfo;
 import com.kangcenet.tms.core.biz.model.Return;
 import com.kangcenet.tms.core.biz.model.TriggerParam;
 import com.kangcenet.tms.core.handler.IJobHandler;

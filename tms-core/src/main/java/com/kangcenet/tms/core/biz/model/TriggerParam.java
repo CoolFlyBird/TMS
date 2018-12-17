@@ -5,10 +5,9 @@ import com.jcraft.jsch.Session;
 import java.io.Serializable;
 
 public class TriggerParam implements Serializable {
-    private int id;
-    private int jobId;
+    private String id;
+    private String jobId;
 
-    private Session session;
     // execute info
     private String executorHandler;
 
@@ -17,31 +16,19 @@ public class TriggerParam implements Serializable {
     //执行接口：api 或者 脚本命令
     private String command = "";
 
-    //脚本参数
-    //linux 账号
-    private String user = "";
-    //linux 密码
-    private String pwd = "";
-    //linux shell 端口
-    private int port = 0;
-    //linux 秘钥登录
-    private String privateKey = "";
-    //linux 秘钥短语
-    private String passphrase = "";
-
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
-    public int getJobId() {
+    public String getJobId() {
         return jobId;
     }
 
-    public void setJobId(int jobId) {
+    public void setJobId(String jobId) {
         this.jobId = jobId;
     }
 
@@ -69,51 +56,4 @@ public class TriggerParam implements Serializable {
         this.command = command;
     }
 
-    public String getUser() {
-        return user;
-    }
-
-    public void setUser(String user) {
-        this.user = user;
-    }
-
-    public String getPwd() {
-        return pwd;
-    }
-
-    public void setPwd(String pwd) {
-        this.pwd = pwd;
-    }
-
-    public int getPort() {
-        return port;
-    }
-
-    public void setPort(int port) {
-        this.port = port;
-    }
-
-    public String getPrivateKey() {
-        return privateKey;
-    }
-
-    public void setPrivateKey(String privateKey) {
-        this.privateKey = privateKey;
-    }
-
-    public String getPassphrase() {
-        return passphrase;
-    }
-
-    public void setPassphrase(String passphrase) {
-        this.passphrase = passphrase;
-    }
-
-    public Session getSession() {
-        return session;
-    }
-
-    public void setSession(Session session) {
-        this.session = session;
-    }
 }

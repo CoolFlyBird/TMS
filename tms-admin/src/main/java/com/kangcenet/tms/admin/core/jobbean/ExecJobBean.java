@@ -10,7 +10,7 @@ public class ExecJobBean extends QuartzJobBean {
     @Override
     protected void executeInternal(JobExecutionContext jobExecutionContext) throws JobExecutionException {
         JobKey jobKey = jobExecutionContext.getTrigger().getJobKey();
-        Integer jobId = Integer.valueOf(jobKey.getName());
+        String jobId = jobKey.getName();
         JobTriggerPoolHelper.trigger(jobId);
     }
 }

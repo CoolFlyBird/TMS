@@ -1,16 +1,19 @@
 package com.kangcenet.tms.admin.core.schedule;
 
 import com.kangcenet.tms.admin.core.jobbean.ExecJobBean;
+import com.kangcenet.tms.admin.core.model.JobInfo;
 import com.kangcenet.tms.admin.core.thread.JobTriggerPoolHelper;
 import com.kangcenet.tms.admin.dao.JobInfoDao;
 import com.kangcenet.tms.core.biz.ExecutorBiz;
 import com.kangcenet.tms.core.biz.impl.ExecutorBizImpl;
 import org.quartz.*;
+import org.quartz.impl.triggers.CronTriggerImpl;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.util.Assert;
 
+import java.util.HashSet;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class JobScheduler implements ApplicationContextAware {
@@ -80,6 +83,23 @@ public class JobScheduler implements ApplicationContextAware {
         return scheduler.checkExists(triggerKey);
     }
 
+    /**
+     * unscheduleJob
+     *
+     * @param jobName
+     * @param jobGroup
+     * @return
+     * @throws SchedulerException
+     */
+    public static boolean removeJob(String jobName, String jobGroup) throws SchedulerException {
+        // TriggerKey : name + group
+        TriggerKey triggerKey = TriggerKey.triggerKey(jobName, jobGroup);
+        boolean result = false;
+        if (checkExists(jobName, jobGroup)) {
+            result = scheduler.unscheduleJob(triggerKey);
+        }
+        return true;
+    }
 
     /**
      * pause
@@ -152,6 +172,85 @@ public class JobScheduler implements ApplicationContextAware {
         scheduler.scheduleJob(jobDetail, cronTrigger);
         System.err.println("addJob success-->jobDetail:" + jobDetail + " cronTrigger:" + cronTrigger);
         return true;
+    }
+
+
+    /**
+     * rescheduleJob
+     *
+     * @param jobGroup
+     * @param jobName
+     * @param cronExpression
+     * @return
+     * @throws SchedulerException
+     */
+    public static boolean rescheduleJob(String jobGroup, String jobName, String cronExpression) throws SchedulerException {
+        // TriggerKey valid if_exists
+        if (!checkExists(jobName, jobGroup)) {
+//            logger.info(">>>>>>>>>>> rescheduleJob fail, job not exists, JobGroup:{}, JobName:{}", jobGroup, jobName);
+            return false;
+        }
+        // TriggerKey : name + group
+        TriggerKey triggerKey = TriggerKey.triggerKey(jobName, jobGroup);
+        CronTrigger oldTrigger = (CronTrigger) scheduler.getTrigger(triggerKey);
+        if (oldTrigger != null) {
+            // avoid repeat
+            String oldCron = oldTrigger.getCronExpression();
+            if (oldCron.equals(cronExpression)){
+                return true;
+            }
+            // CronTrigger : TriggerKey + cronExpression
+            CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule(cronExpression).withMisfireHandlingInstructionDoNothing();
+            oldTrigger = oldTrigger.getTriggerBuilder().withIdentity(triggerKey).withSchedule(cronScheduleBuilder).build();
+            // rescheduleJob
+            scheduler.rescheduleJob(triggerKey, oldTrigger);
+        } else {
+            // CronTrigger : TriggerKey + cronExpression
+            CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule(cronExpression).withMisfireHandlingInstructionDoNothing();
+            CronTrigger cronTrigger = TriggerBuilder.newTrigger().withIdentity(triggerKey).withSchedule(cronScheduleBuilder).build();
+
+            // JobDetail-JobDataMap fresh
+            JobKey jobKey = new JobKey(jobName, jobGroup);
+            JobDetail jobDetail = scheduler.getJobDetail(jobKey);
+            /*JobDataMap jobDataMap = jobDetail.getJobDataMap();
+            jobDataMap.clear();
+            jobDataMap.putAll(JacksonUtil.readValue(jobInfo.getJobData(), Map.class));*/
+            // Trigger fresh
+            HashSet<Trigger> triggerSet = new HashSet<Trigger>();
+            triggerSet.add(cronTrigger);
+            scheduler.scheduleJob(jobDetail, triggerSet, true);
+        }
+//        logger.info(">>>>>>>>>>> resumeJob success, JobGroup:{}, JobName:{}", jobGroup, jobName);
+        return true;
+    }
+
+    /**
+     * fill job info
+     *
+     * @param jobInfo
+     */
+    public static void fillJobInfo(JobInfo jobInfo) {
+        // TriggerKey : name + group
+        String group = String.valueOf(jobInfo.getJobGroup());
+        String name = String.valueOf(jobInfo.getId());
+        TriggerKey triggerKey = TriggerKey.triggerKey(name, group);
+        try {
+            Trigger trigger = scheduler.getTrigger(triggerKey);
+            Trigger.TriggerState triggerState = scheduler.getTriggerState(triggerKey);
+            // parse params
+            if (trigger != null && trigger instanceof CronTriggerImpl) {
+                String cronExpression = ((CronTriggerImpl) trigger).getCronExpression();
+                jobInfo.setJobCron(cronExpression);
+            }
+            //JobKey jobKey = new JobKey(jobInfo.getJobName(), String.valueOf(jobInfo.getJobGroup()));
+            //JobDetail jobDetail = scheduler.getJobDetail(jobKey);
+            //String jobClass = jobDetail.getJobClass().getName();
+//            if (triggerState!=null) {
+//                jobInfo.setJobStatus(triggerState.name());
+//            }
+        } catch (SchedulerException e) {
+//            logger.error(e.getMessage(), e);
+        }
     }
 
 

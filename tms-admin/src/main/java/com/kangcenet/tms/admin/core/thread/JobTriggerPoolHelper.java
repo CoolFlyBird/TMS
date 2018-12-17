@@ -14,7 +14,7 @@ public class JobTriggerPoolHelper {
             TimeUnit.SECONDS,
             new LinkedBlockingQueue<Runnable>(1000));
 
-    public void addTrigger(final int jobId) {
+    public void addTrigger(final String jobId) {
         triggerPool.execute(new Runnable() {
             public void run() {
                 JobTrigger.trigger(jobId);
@@ -31,7 +31,7 @@ public class JobTriggerPoolHelper {
     /**
      * @param jobId
      */
-    public static void trigger(int jobId) {
+    public static void trigger(String jobId) {
         helper.addTrigger(jobId);
     }
 

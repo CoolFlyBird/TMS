@@ -31,7 +31,7 @@ public class JobExecutor implements ApplicationContextAware {
     public void destroy() {
         // destory JobThreadRepository
         if (JobThreadRepository.size() > 0) {
-            for (Map.Entry<Integer, JobThread> item : JobThreadRepository.entrySet()) {
+            for (Map.Entry<String, JobThread> item : JobThreadRepository.entrySet()) {
                 removeJobThread(item.getKey(), "web container destroy and kill the job.");
             }
             JobThreadRepository.clear();
@@ -78,9 +78,9 @@ public class JobExecutor implements ApplicationContextAware {
 
 
     // ---------------------- job thread repository ----------------------
-    private static ConcurrentHashMap<Integer, JobThread> JobThreadRepository = new ConcurrentHashMap<Integer, JobThread>();
+    private static ConcurrentHashMap<String, JobThread> JobThreadRepository = new ConcurrentHashMap<String, JobThread>();
 
-    public static JobThread registerJobThread(int jobId, IJobHandler handler, String removeOldReason) {
+    public static JobThread registerJobThread(String jobId, IJobHandler handler, String removeOldReason) {
         JobThread newJobThread = new JobThread(jobId, handler);
         newJobThread.start();
 //        logger.info(">>>>>>>>>>> xxl-job regist JobThread success, jobId:{}, handler:{}", new Object[]{jobId, handler});
@@ -92,7 +92,7 @@ public class JobExecutor implements ApplicationContextAware {
         return newJobThread;
     }
 
-    public static void removeJobThread(int jobId, String removeOldReason) {
+    public static void removeJobThread(String jobId, String removeOldReason) {
         JobThread oldJobThread = JobThreadRepository.remove(jobId);
         if (oldJobThread != null) {
             oldJobThread.toStop(removeOldReason);
@@ -100,7 +100,7 @@ public class JobExecutor implements ApplicationContextAware {
         }
     }
 
-    public static JobThread loadJobThread(int jobId) {
+    public static JobThread loadJobThread(String jobId) {
         JobThread jobThread = JobThreadRepository.get(jobId);
         return jobThread;
     }

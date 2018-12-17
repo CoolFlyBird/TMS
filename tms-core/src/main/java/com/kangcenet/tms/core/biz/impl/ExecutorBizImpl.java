@@ -21,6 +21,7 @@ public class ExecutorBizImpl implements ExecutorBiz {
             // change handler, need kill old thread
             removeOldReason = "change job handler ,and terminate the old job thread.";
             jobThread = null;
+            jobHandler = null;
             System.err.println("change job handler");
         }
 
