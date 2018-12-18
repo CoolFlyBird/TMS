@@ -17,10 +17,11 @@
     </resultMap>
 
     <select id="pageList" parameterType="java.util.HashMap" resultMap="JobInfo">
-        SELECT <include refid="Base_Column_List" />
+        SELECT
+        <include refid="Base_Column_List"/>
         FROM JOB_QRTZ_TRIGGER_INFO AS t
-        <trim prefix="WHERE" prefixOverrides="AND | OR" >
-            <if test="jobGroup != null">
+        <trim prefix="WHERE" prefixOverrides="AND | OR">
+            <if test="jobGroup != null and jobGroup != ''">
                 AND t.job_group = #{jobGroup}
             </if>
             <if test="jobDesc != null and jobDesc != ''">
@@ -34,8 +35,26 @@
         LIMIT #{offset}, #{pagesize}
     </select>
 
+    <select id="pageListCount" parameterType="java.util.HashMap" resultType="int">
+        SELECT count(1)
+        FROM JOB_QRTZ_TRIGGER_INFO AS t
+        <trim prefix="WHERE" prefixOverrides="AND | OR">
+            <if test="jobGroup != null and jobGroup != ''">
+                AND t.job_group = #{jobGroup}
+            </if>
+            <if test="jobDesc != null and jobDesc != ''">
+                AND t.job_desc like CONCAT(CONCAT('%', #{jobDesc}), '%')
+            </if>
+            <if test="executorHandler != null and executorHandler != ''">
+                AND t.executor_handler like CONCAT(CONCAT('%', #{executorHandler}), '%')
+            </if>
+        </trim>
+    </select>
+
+
     <select id="loadById" parameterType="java.util.HashMap" resultMap="JobInfo">
-        SELECT <include refid="Base_Column_List" />
+        SELECT
+        <include refid="Base_Column_List"/>
         FROM JOB_QRTZ_TRIGGER_INFO AS t
         WHERE t.id = #{id}
     </select>
@@ -65,7 +84,8 @@
     </delete>
 
     <select id="getJobsByGroup" parameterType="java.util.HashMap" resultMap="JobInfo">
-        SELECT <include refid="Base_Column_List" />
+        SELECT
+        <include refid="Base_Column_List"/>
         FROM JOB_QRTZ_TRIGGER_INFO AS t
         WHERE t.job_group = #{jobGroup}
     </select>
