@@ -3,6 +3,8 @@ package com.kangcenet.tms.admin.service;
 import com.kangcenet.tms.admin.core.model.JobInfo;
 import com.kangcenet.tms.core.biz.model.Return;
 
+import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 public interface JobService {
@@ -59,4 +61,27 @@ public interface JobService {
      * @return
      */
     Return<String> resume(String id);
+
+    /**
+     * getJobsByGroup
+     *
+     * @param jobGroup
+     * @return
+     */
+    Return<List<JobInfo>> getJobsByGroup(String jobGroup);
+    /**
+     * dashboard info
+     *
+     * @return
+     */
+    public Map<String, Object> dashboardInfo();
+
+    /**
+     * chart info
+     *
+     * @param startDate
+     * @param endDate
+     * @return
+     */
+    public Return<Map<String, Object>> chartInfo(Date startDate, Date endDate);
 }

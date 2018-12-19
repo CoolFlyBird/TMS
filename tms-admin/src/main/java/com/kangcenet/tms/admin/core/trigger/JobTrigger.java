@@ -1,9 +1,13 @@
 package com.kangcenet.tms.admin.core.trigger;
 
 import com.kangcenet.tms.admin.core.model.JobInfo;
+import com.kangcenet.tms.admin.core.model.JobLog;
 import com.kangcenet.tms.admin.core.schedule.JobScheduler;
 import com.kangcenet.tms.core.biz.ExecutorBiz;
+import com.kangcenet.tms.core.biz.model.Return;
 import com.kangcenet.tms.core.biz.model.TriggerParam;
+
+import java.util.Date;
 
 public class JobTrigger {
     public static void trigger(String jobId) {
@@ -17,7 +21,12 @@ public class JobTrigger {
 
     private static void processTrigger(JobInfo jobInfo) {
         // 1、save log-id
-//        XxlJobLog jobLog = new XxlJobLog();
+        JobLog jobLog = new JobLog();
+        jobLog.setJobGroup(jobInfo.getJobGroup());
+        jobLog.setJobId(jobInfo.getId());
+        jobLog.setTriggerTime(new Date());
+        JobScheduler.jobLogDao.save(jobLog);
+
 //         2、init trigger-param
         TriggerParam triggerParam = new TriggerParam();
         triggerParam.setJobId(jobInfo.getId());
@@ -31,15 +40,23 @@ public class JobTrigger {
         // 5、collection trigger info
 //        StringBuffer triggerMsgSb = new StringBuffer();
         // 6、save log trigger-info
-//        jobLog.setExecutorAddress(address);
+
+        Return<String> triggerResult = runExecutor(triggerParam);
+
+        jobLog.setExecutorAddress(jobInfo.getAddress());
+        jobLog.setExecutorHandler(jobInfo.getExecutorHandler());
+        jobLog.setExecutorParam(jobInfo.getCommand());
+        jobLog.setTriggerCode(triggerResult.getCode());
+//        jobLog.setTriggerMsg(triggerMsgSb.toString());
+        JobScheduler.jobLogDao.updateTriggerInfo(jobLog);
+
         // 7、monitor trigger
-//        JobFailMonitorHelper.monitor(jobLog.getId());
-        runExecutor(triggerParam);
+        JobFailMonitorHelper.monitor(jobLog.getId());
     }
 
-    private static void runExecutor(TriggerParam jobInfo) {
+    private static Return<String> runExecutor(TriggerParam jobInfo) {
 //        ExecutorBizImpl
         ExecutorBiz executorBiz = JobScheduler.getExecutorBiz("执行器的地址，之后可以拓展为分布式，目前执行器和 admin 放在一起");
-        executorBiz.run(jobInfo);
+        return executorBiz.run(jobInfo);
     }
 }

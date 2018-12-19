@@ -4,6 +4,7 @@ import com.kangcenet.tms.admin.core.jobbean.ExecJobBean;
 import com.kangcenet.tms.admin.core.model.JobInfo;
 import com.kangcenet.tms.admin.core.thread.JobTriggerPoolHelper;
 import com.kangcenet.tms.admin.dao.JobInfoDao;
+import com.kangcenet.tms.admin.dao.JobLogDao;
 import com.kangcenet.tms.core.biz.ExecutorBiz;
 import com.kangcenet.tms.core.biz.impl.ExecutorBizImpl;
 import org.quartz.*;
@@ -32,7 +33,7 @@ public class JobScheduler implements ApplicationContextAware {
     }
 
     //    // dao
-//    public static XxlJobLogDao xxlJobLogDao;
+    public static JobLogDao jobLogDao;
     public static JobInfoDao jobInfoDao;
 //    public static XxlJobRegistryDao xxlJobRegistryDao;
 //    public static XxlJobGroupDao xxlJobGroupDao;
@@ -40,7 +41,7 @@ public class JobScheduler implements ApplicationContextAware {
 
 
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-//        XxlJobDynamicScheduler.xxlJobLogDao = applicationContext.getBean(XxlJobLogDao.class);
+        JobScheduler.jobLogDao = applicationContext.getBean(JobLogDao.class);
         JobScheduler.jobInfoDao = applicationContext.getBean(JobInfoDao.class);
 //        XxlJobDynamicScheduler.xxlJobRegistryDao = applicationContext.getBean(XxlJobRegistryDao.class);
 //        XxlJobDynamicScheduler.xxlJobGroupDao = applicationContext.getBean(XxlJobGroupDao.class);
@@ -196,7 +197,7 @@ public class JobScheduler implements ApplicationContextAware {
         if (oldTrigger != null) {
             // avoid repeat
             String oldCron = oldTrigger.getCronExpression();
-            if (oldCron.equals(cronExpression)){
+            if (oldCron.equals(cronExpression)) {
                 return true;
             }
             // CronTrigger : TriggerKey + cronExpression

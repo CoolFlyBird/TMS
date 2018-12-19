@@ -14,6 +14,9 @@ public class JobInfo {
     //执行接口：api 或者 脚本命令
     private String command = "";
 
+    private String author;        // 负责人
+    private String alarmEmail = "1239985370@qq.com";    // 报警邮件
+
     public String getId() {
         return id;
     }
@@ -68,5 +71,13 @@ public class JobInfo {
 
     public void setJobGroup(String jobGroup) {
         this.jobGroup = jobGroup;
+    }
+
+    public String getAlarmEmail() {
+        return alarmEmail;
+    }
+
+    public void setAlarmEmail(String alarmEmail) {
+        this.alarmEmail = alarmEmail;
     }
 }

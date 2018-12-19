@@ -1,29 +1,11 @@
 package com.kangcenet.tms.admin.core.model;
 
-import org.springframework.util.StringUtils;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public class JobGroup {
 
     private String id;
     private String appName;
     private String title;
-    private int order;
-    private int addressType;    // 执行器地址类型：0=自动注册、1=手动录入
-    private String addressList;    // 执行器地址列表，多地址逗号分隔(手动录入)
-
-    // registry list
-    private List<String> registryList;  // 执行器地址列表(系统注册)
-
-    public List<String> getRegistryList() {
-        if (StringUtils.isEmpty(addressList)) {
-            registryList = new ArrayList<String>(Arrays.asList(addressList.split(",")));
-        }
-        return registryList;
-    }
 
     public String getId() {
         return id;
@@ -49,27 +31,4 @@ public class JobGroup {
         this.title = title;
     }
 
-    public int getOrder() {
-        return order;
-    }
-
-    public void setOrder(int order) {
-        this.order = order;
-    }
-
-    public int getAddressType() {
-        return addressType;
-    }
-
-    public void setAddressType(int addressType) {
-        this.addressType = addressType;
-    }
-
-    public String getAddressList() {
-        return addressList;
-    }
-
-    public void setAddressList(String addressList) {
-        this.addressList = addressList;
-    }
 }

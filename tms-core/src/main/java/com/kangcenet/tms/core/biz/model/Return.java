@@ -10,7 +10,7 @@ public class Return<T> implements Serializable {
 
     private int code;
     private String msg = "执行成功";
-    private T content;
+    private T data;
 
 
     public Return() {
@@ -21,9 +21,9 @@ public class Return<T> implements Serializable {
         this.msg = msg;
     }
 
-    public Return(T content) {
+    public Return(T data) {
         this.code = SUCCESS_CODE;
-        this.content = content;
+        this.data = data;
     }
 
     public int getCode() {
@@ -42,17 +42,17 @@ public class Return<T> implements Serializable {
         this.msg = msg;
     }
 
-    public T getContent() {
-        return content;
+    public T getData() {
+        return data;
     }
 
-    public void setContent(T content) {
-        this.content = content;
+    public void setData(T data) {
+        this.data = data;
     }
 
     @Override
     public String toString() {
-        return "Return [code=" + code + ", msg=" + msg + ", content=" + content + "]";
+        return "Return [code=" + code + ", msg=" + msg + ", data=" + data + "]";
     }
 
 }

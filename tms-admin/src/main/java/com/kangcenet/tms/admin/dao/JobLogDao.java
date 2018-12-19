@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Param;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * job info
@@ -17,7 +18,10 @@ public interface JobLogDao {
     public List<JobLog> pageList(@Param("offset") int offset,
                                  @Param("pagesize") int pagesize,
                                  @Param("jobGroup") String jobGroup,
-                                 @Param("jobId") String jobId);
+                                 @Param("jobId") String jobId,
+                                 @Param("triggerTimeStart") Date triggerTimeStart,
+                                 @Param("triggerTimeEnd") Date triggerTimeEnd,
+                                 @Param("logStatus") int logStatus);
 
 
     public int pageListCount(@Param("offset") int offset,
@@ -28,16 +32,24 @@ public interface JobLogDao {
                              @Param("triggerTimeEnd") Date triggerTimeEnd,
                              @Param("logStatus") int logStatus);
 
-    public int save(JobInfo info);
+    public JobLog load(@Param("id") int id);
 
-    public JobInfo loadById(@Param("id") String id);
+    public int save(JobLog jobLog);
 
-    public int update(JobInfo item);
+    public int updateTriggerInfo(JobLog jobLog);
 
-    public int delete(@Param("id") String id);
+    public int updateHandleInfo(JobLog jobLog);
 
-    public int findAllCount();
+    public int delete(@Param("jobId") String jobId);
 
-//    public List<JobInfo> getJobsByGroup(@Param("jobGroup") int jobGroup);
+    public int triggerCountByHandleCode(@Param("handleCode") int handleCode);
+
+    public List<Map<String, Object>> triggerCountByDay(@Param("from") Date from,
+                                                       @Param("to") Date to);
+
+    public int clearLog(@Param("jobGroup") String jobGroup,
+                        @Param("jobId") String jobId,
+                        @Param("clearBeforeTime") Date clearBeforeTime,
+                        @Param("clearBeforeNum") int clearBeforeNum);
 
 }

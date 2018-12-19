@@ -10,6 +10,7 @@ public class JobLog {
     private String jobId;
 
     // execute info
+    private String executorAddress;
     private String executorHandler;
     private String executorParam;
 
@@ -109,5 +110,13 @@ public class JobLog {
 
     public void setHandleMsg(String handleMsg) {
         this.handleMsg = handleMsg;
+    }
+
+    public String getExecutorAddress() {
+        return executorAddress;
+    }
+
+    public void setExecutorAddress(String executorAddress) {
+        this.executorAddress = executorAddress;
     }
 }

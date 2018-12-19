@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
+import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -25,6 +27,15 @@ public class JobInfoController {
     public Return<String> test(@RequestParam Map<String, String> params) {
         return new Return("test");
     }
+
+    @RequestMapping("/pageList")
+    @ResponseBody
+    public Map<String, Object> pageList(@RequestParam(required = false, defaultValue = "0") int start,
+                                        @RequestParam(required = false, defaultValue = "10") int length,
+                                        String jobGroup, String jobDesc, String executorHandler, String filterTime) {
+        return jobService.pageList(start, length, jobGroup, jobDesc, executorHandler, filterTime);
+    }
+
 
     @ResponseBody
     @RequestMapping("/add")
@@ -53,12 +64,10 @@ public class JobInfoController {
         return jobService.update(jobInfo);
     }
 
-
     @RequestMapping("/remove")
     @ResponseBody
     public Return<String> remove(@RequestParam Map<String, String> params) {
         String id = params.get("id");
-
         return jobService.remove(id);
     }
 
@@ -76,12 +85,24 @@ public class JobInfoController {
         return jobService.resume(id);
     }
 
-    @RequestMapping("/pageList")
+    @RequestMapping("/getJobsByGroup")
     @ResponseBody
-    public Map<String, Object> pageList(@RequestParam(required = false, defaultValue = "0") int start,
-                                        @RequestParam(required = false, defaultValue = "10") int length,
-                                        String jobGroup, String jobDesc, String executorHandler, String filterTime) {
-        return jobService.pageList(start, length, jobGroup, jobDesc, executorHandler, filterTime);
+    public Return<List<JobInfo>> getJobsByGroup(@RequestParam String jobGroup) {
+        return jobService.getJobsByGroup(jobGroup);
+    }
+
+    @RequestMapping("/dashboard")
+    @ResponseBody
+    public Return<String> dashboardInfo() {
+        Map<String, Object> dashboardMap = jobService.dashboardInfo();
+        return new Return(dashboardMap);
+    }
+
+    @RequestMapping("/chartInfo")
+    @ResponseBody
+    public Return<Map<String, Object>> chartInfo(Date startDate, Date endDate) {
+        Return<Map<String, Object>> chartInfo = jobService.chartInfo(startDate, endDate);
+        return chartInfo;
     }
 
 

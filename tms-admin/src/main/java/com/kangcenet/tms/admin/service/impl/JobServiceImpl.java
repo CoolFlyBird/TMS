@@ -3,28 +3,36 @@ package com.kangcenet.tms.admin.service.impl;
 import com.kangcenet.tms.admin.core.model.JobInfo;
 import com.kangcenet.tms.admin.core.schedule.JobScheduler;
 import com.kangcenet.tms.admin.dao.JobInfoDao;
+import com.kangcenet.tms.admin.dao.JobLogDao;
 import com.kangcenet.tms.admin.service.JobService;
 import com.kangcenet.tms.core.biz.model.Return;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.time.DateUtils;
+import org.apache.commons.lang3.time.FastDateFormat;
 import org.quartz.CronExpression;
 import org.quartz.SchedulerException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
-import java.text.MessageFormat;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class JobServiceImpl implements JobService {
+    private static Logger logger = LoggerFactory.getLogger(JobServiceImpl.class);
     //    @Resource
 //    private XxlJobGroupDao xxlJobGroupDao;
     @Resource
     private JobInfoDao jobInfoDao;
-//    @Resource
-//    public XxlJobLogDao xxlJobLogDao;
+    @Resource
+    public JobLogDao jobLogDao;
 
+    @Override
     public Map<String, Object> pageList(int start, int length, String jobGroup, String jobDesc, String executorHandler, String filterTime) {
         // page list
         List<JobInfo> list = jobInfoDao.pageList(start, length, jobGroup, jobDesc, executorHandler);
@@ -44,6 +52,7 @@ public class JobServiceImpl implements JobService {
         return maps;
     }
 
+    @Override
     public Return<String> add(JobInfo jobInfo) {
         // valid
 //        JobGroup group = xxlJobGroupDao.load(jobInfo.getJobGroup());
@@ -64,20 +73,20 @@ public class JobServiceImpl implements JobService {
         String qzGroup = String.valueOf(jobInfo.getJobGroup());
         try {
             JobScheduler.addJob(qzName, qzGroup, jobInfo.getJobCron());
-            //XxlJobDynamicScheduler.pauseJob(qz_name, qz_group);
             return Return.SUCCESS;
         } catch (SchedulerException e) {
-//            logger.error(e.getMessage(), e);
-//            try {
-//                xxlJobInfoDao.delete(jobInfo.getId());
-//                JobScheduler.removeJob(qz_name, qz_group);
-//            } catch (SchedulerException e1) {
-//                logger.error(e.getMessage(), e1);
-//            }
+            logger.error(e.getMessage(), e);
+            try {
+                jobInfoDao.delete(jobInfo.getId());
+                JobScheduler.removeJob(qzName, qzGroup);
+            } catch (SchedulerException e1) {
+                logger.error(e.getMessage(), e1);
+            }
             return new Return<String>(Return.FAIL_CODE, "任务失败:" + e.getMessage());
         }
     }
 
+    @Override
     public Return<String> update(JobInfo jobInfo) {
         if (!CronExpression.isValidExpression(jobInfo.getJobCron())) {
             return new Return<String>(Return.FAIL_CODE, "Cron格式非法");
@@ -105,27 +114,28 @@ public class JobServiceImpl implements JobService {
             boolean ret = JobScheduler.rescheduleJob(qz_group, qz_name, existsJobInfo.getJobCron());
             return ret ? Return.SUCCESS : Return.FAIL;
         } catch (SchedulerException e) {
-//            logger.error(e.getMessage(), e);
+            logger.error(e.getMessage(), e);
         }
         return Return.FAIL;
     }
 
+    @Override
     public Return<String> remove(String id) {
         JobInfo xxlJobInfo = jobInfoDao.loadById(id);
         String group = String.valueOf(xxlJobInfo.getJobGroup());
         String name = String.valueOf(xxlJobInfo.getId());
-
         try {
             JobScheduler.removeJob(name, group);
             jobInfoDao.delete(id);
-//            xxlJobLogDao.delete(id);
+            jobLogDao.delete(id);
             return Return.SUCCESS;
         } catch (SchedulerException e) {
-//            logger.error(e.getMessage(), e);
+            logger.error(e.getMessage(), e);
         }
         return Return.FAIL;
     }
 
+    @Override
     public Return<String> pause(String id) {
         JobInfo jobInfo = jobInfoDao.loadById(id);
         String name = jobInfo.getId();
@@ -138,6 +148,7 @@ public class JobServiceImpl implements JobService {
         }
     }
 
+    @Override
     public Return<String> resume(String id) {
         JobInfo xxlJobInfo = jobInfoDao.loadById(id);
         String group = String.valueOf(xxlJobInfo.getJobGroup());
@@ -148,5 +159,96 @@ public class JobServiceImpl implements JobService {
         } catch (SchedulerException e) {
             return Return.FAIL;
         }
+    }
+
+    @Override
+    public Return<List<JobInfo>> getJobsByGroup(String jobGroup) {
+        List<JobInfo> list = jobInfoDao.getJobsByGroup(jobGroup);
+        return new Return<List<JobInfo>>(list);
+    }
+
+    @Override
+    public Map<String, Object> dashboardInfo() {
+        int jobInfoCount = jobInfoDao.findAllCount();
+        int jobLogCount = jobLogDao.triggerCountByHandleCode(-1);
+        int jobLogSuccessCount = jobLogDao.triggerCountByHandleCode(Return.SUCCESS_CODE);
+
+        // executor count
+//        Set<String> executerAddressSet = new HashSet<String>();
+//        List<JobGroup> groupList = jobGroupDao.findAll();
+//        if (CollectionUtils.isNotEmpty(groupList)) {
+//            for (JobGroup group: groupList) {
+//                if (CollectionUtils.isNotEmpty(group.getRegistryList())) {
+//                    executerAddressSet.addAll(group.getRegistryList());
+//                }
+//            }
+//        }
+
+//        int executorCount = executerAddressSet.size();
+        Map<String, Object> dashboardMap = new HashMap<String, Object>();
+        dashboardMap.put("jobInfoCount", jobInfoCount);
+        dashboardMap.put("jobLogCount", jobLogCount);
+        dashboardMap.put("jobLogSuccessCount", jobLogSuccessCount);
+//        dashboardMap.put("executorCount", executorCount);
+        return dashboardMap;
+    }
+
+    @Override
+    public Return<Map<String, Object>> chartInfo(Date startDate, Date endDate) {
+		/*// get cache
+		String cacheKey = TRIGGER_CHART_DATA_CACHE + "_" + startDate.getTime() + "_" + endDate.getTime();
+		Map<String, Object> chartInfo = (Map<String, Object>) LocalCacheUtil.get(cacheKey);
+		if (chartInfo != null) {
+			return new ReturnT<Map<String, Object>>(chartInfo);
+		}*/
+
+        // process
+        List<String> triggerDayList = new ArrayList<String>();
+        List<Integer> triggerDayCountRunningList = new ArrayList<Integer>();
+        List<Integer> triggerDayCountSucList = new ArrayList<Integer>();
+        List<Integer> triggerDayCountFailList = new ArrayList<Integer>();
+        int triggerCountRunningTotal = 0;
+        int triggerCountSucTotal = 0;
+        int triggerCountFailTotal = 0;
+
+        List<Map<String, Object>> triggerCountMapAll = jobLogDao.triggerCountByDay(startDate, endDate);
+        if (CollectionUtils.isNotEmpty(triggerCountMapAll)) {
+            for (Map<String, Object> item : triggerCountMapAll) {
+                String day = String.valueOf(item.get("triggerDay"));
+                int triggerDayCount = Integer.valueOf(String.valueOf(item.get("triggerDayCount")));
+                int triggerDayCountRunning = Integer.valueOf(String.valueOf(item.get("triggerDayCountRunning")));
+                int triggerDayCountSuc = Integer.valueOf(String.valueOf(item.get("triggerDayCountSuc")));
+                int triggerDayCountFail = triggerDayCount - triggerDayCountRunning - triggerDayCountSuc;
+
+                triggerDayList.add(day);
+                triggerDayCountRunningList.add(triggerDayCountRunning);
+                triggerDayCountSucList.add(triggerDayCountSuc);
+                triggerDayCountFailList.add(triggerDayCountFail);
+
+                triggerCountRunningTotal += triggerDayCountRunning;
+                triggerCountSucTotal += triggerDayCountSuc;
+                triggerCountFailTotal += triggerDayCountFail;
+            }
+        } else {
+            for (int i = 4; i > -1; i--) {
+                triggerDayList.add(FastDateFormat.getInstance("yyyy-MM-dd").format(DateUtils.addDays(new Date(), -i)));
+                triggerDayCountSucList.add(0);
+                triggerDayCountFailList.add(0);
+            }
+        }
+
+        Map<String, Object> result = new HashMap<String, Object>();
+        result.put("triggerDayList", triggerDayList);
+        result.put("triggerDayCountRunningList", triggerDayCountRunningList);
+        result.put("triggerDayCountSucList", triggerDayCountSucList);
+        result.put("triggerDayCountFailList", triggerDayCountFailList);
+
+        result.put("triggerCountRunningTotal", triggerCountRunningTotal);
+        result.put("triggerCountSucTotal", triggerCountSucTotal);
+        result.put("triggerCountFailTotal", triggerCountFailTotal);
+
+		/*// set cache
+		LocalCacheUtil.set(cacheKey, result, 60*1000);     // cache 60s*/
+        return new Return<Map<String, Object>>(result);
     }
 }

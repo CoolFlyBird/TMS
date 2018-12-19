@@ -18,7 +18,6 @@ public interface JobInfoDao {
                                   @Param("jobDesc") String jobDesc,
                                   @Param("executorHandler") String executorHandler);
 
-    //
     public int pageListCount(@Param("offset") int offset,
                              @Param("pagesize") int pagesize,
                              @Param("jobGroup") String jobGroup,
@@ -35,6 +34,6 @@ public interface JobInfoDao {
 
     public int findAllCount();
 
-//    public List<JobInfo> getJobsByGroup(@Param("jobGroup") int jobGroup);
+    public List<JobInfo> getJobsByGroup(@Param("jobGroup") String jobGroup);
 
 }
