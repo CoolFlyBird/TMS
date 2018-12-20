@@ -1,5 +1,6 @@
 package com.kangcenet.tms.admin.jobhandler;
 
+import com.kangcenet.tms.admin.core.util.HttpClientUtil;
 import com.kangcenet.tms.core.biz.model.Return;
 import com.kangcenet.tms.core.biz.model.TriggerParam;
 import com.kangcenet.tms.core.handler.IJobHandler;
@@ -13,14 +14,15 @@ import org.springframework.stereotype.Component;
 @Component
 public class HttpJobHandler extends IJobHandler<TriggerParam> {
     private static Log log = LogFactory.getLog(ShellJobHandler.class);
+
     @Override
     public Return<String> execute(TriggerParam param) throws Exception {
-        OkHttpClient client = new OkHttpClient.Builder().build();
-        Request request = new Request.Builder().url(param.getAddress() + param.getCommand()).build();
-        Call call = client.newCall(request);
-        Response response = call.execute();
-        String result = response.body().string();
-        log.info("response:" + result);
-        return new Return<String>(result);
+//        OkHttpClient client = new OkHttpClient.Builder().build();
+//        Request request = new Request.Builder().url(param.getAddress() + param.getCommand()).build();
+//        Call call = client.newCall(request);
+//        Response response = call.execute();
+//        String result = response.body().string();
+//        log.info("response:" + result);
+        return HttpClientUtil.execute(param.getAddress(), param.getCommand());
     }
 }

@@ -140,7 +140,7 @@
 			`trigger_msg`= #{triggerMsg},
 			`executor_address`= #{executorAddress},
 			`executor_handler`=#{executorHandler},
-			`executor_param`= #{executorParam},
+			`executor_param`= #{executorParam}
 		WHERE `id`= #{id}
 	</update>
 

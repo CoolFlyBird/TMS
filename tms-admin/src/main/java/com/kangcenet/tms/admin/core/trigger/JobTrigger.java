@@ -3,6 +3,7 @@ package com.kangcenet.tms.admin.core.trigger;
 import com.kangcenet.tms.admin.core.model.JobInfo;
 import com.kangcenet.tms.admin.core.model.JobLog;
 import com.kangcenet.tms.admin.core.schedule.JobScheduler;
+import com.kangcenet.tms.admin.core.thread.JobFailMonitorHelper;
 import com.kangcenet.tms.core.biz.ExecutorBiz;
 import com.kangcenet.tms.core.biz.model.Return;
 import com.kangcenet.tms.core.biz.model.TriggerParam;
@@ -56,7 +57,8 @@ public class JobTrigger {
 
     private static Return<String> runExecutor(TriggerParam jobInfo) {
 //        ExecutorBizImpl
-        ExecutorBiz executorBiz = JobScheduler.getExecutorBiz("执行器的地址，之后可以拓展为分布式，目前执行器和 admin 放在一起");
+//        ExecutorBiz executorBiz = JobScheduler.getExecutorBiz("执行器的地址，之后可以拓展为分布式，目前执行器和 admin 放在一起");
+        ExecutorBiz executorBiz = JobScheduler.getExecutorBiz("address");
         return executorBiz.run(jobInfo);
     }
 }

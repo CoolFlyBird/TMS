@@ -2,6 +2,7 @@ package com.kangcenet.tms.admin.core.schedule;
 
 import com.kangcenet.tms.admin.core.jobbean.ExecJobBean;
 import com.kangcenet.tms.admin.core.model.JobInfo;
+import com.kangcenet.tms.admin.core.thread.JobFailMonitorHelper;
 import com.kangcenet.tms.admin.core.thread.JobTriggerPoolHelper;
 import com.kangcenet.tms.admin.dao.JobInfoDao;
 import com.kangcenet.tms.admin.dao.JobLogDao;
@@ -52,7 +53,7 @@ public class JobScheduler implements ApplicationContextAware {
 //        // admin registry monitor run
 //        JobRegistryMonitorHelper.getInstance().start();
 //        // admin monitor run
-//        JobFailMonitorHelper.getInstance().start();
+        JobFailMonitorHelper.getInstance().start();
 //        // admin-server(spring-mvc)
 //        NetComServerFactory.putService(AdminBiz.class, XxlJobDynamicScheduler.adminBiz);
 //        NetComServerFactory.setAccessToken(accessToken);
@@ -67,7 +68,7 @@ public class JobScheduler implements ApplicationContextAware {
 //        // admin registry stop
 //        JobRegistryMonitorHelper.getInstance().toStop();
 //        // admin monitor stop
-//        JobFailMonitorHelper.getInstance().toStop();
+        JobFailMonitorHelper.getInstance().toStop();
     }
 
 

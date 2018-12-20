@@ -1,5 +1,8 @@
 package com.kangcenet.tms.admin.core.util;
 
+import com.kangcenet.tms.admin.core.conf.JobAdminConfig;
+import org.apache.commons.mail.DefaultAuthenticator;
+import org.apache.commons.mail.EmailException;
 import org.apache.commons.mail.HtmlEmail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +16,7 @@ public class MailUtil {
      * @param mailBody		邮件正文
      * @return
      */
-    public static boolean sendMail(String toAddress, String mailSubject, String mailBody){
+    public static boolean sendMail(String toAddress, String mailSubject, String mailBody) throws EmailException {
 
         try {
             // Create the email message
@@ -24,17 +27,17 @@ public class MailUtil {
 
             email.setHostName(JobAdminConfig.getAdminConfig().getMailHost());
 
-            if (XxlJobAdminConfig.getAdminConfig().isMailSSL()) {
-                email.setSslSmtpPort(XxlJobAdminConfig.getAdminConfig().getMailPort());
+            if (JobAdminConfig.getAdminConfig().isMailSSL()) {
+                email.setSslSmtpPort(JobAdminConfig.getAdminConfig().getMailPort());
                 email.setSSLOnConnect(true);
             } else {
-                email.setSmtpPort(Integer.valueOf(XxlJobAdminConfig.getAdminConfig().getMailPort()));
+                email.setSmtpPort(Integer.valueOf(JobAdminConfig.getAdminConfig().getMailPort()));
             }
 
-            email.setAuthenticator(new DefaultAuthenticator(XxlJobAdminConfig.getAdminConfig().getMailUsername(), XxlJobAdminConfig.getAdminConfig().getMailPassword()));
+            email.setAuthenticator(new DefaultAuthenticator(JobAdminConfig.getAdminConfig().getMailUsername(), JobAdminConfig.getAdminConfig().getMailPassword()));
             email.setCharset("UTF-8");
 
-            email.setFrom(XxlJobAdminConfig.getAdminConfig().getMailUsername(), XxlJobAdminConfig.getAdminConfig().getMailSendNick());
+            email.setFrom(JobAdminConfig.getAdminConfig().getMailUsername(), JobAdminConfig.getAdminConfig().getMailSendNick());
             email.addTo(toAddress);
             email.setSubject(mailSubject);
             email.setMsg(mailBody);
