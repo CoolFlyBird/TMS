@@ -15,6 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
 import javax.annotation.Resource;
 import java.text.ParseException;
 import java.util.Date;
@@ -26,9 +27,8 @@ import java.util.Map;
 @RequestMapping("/joblog")
 public class JobLogController {
     private static Logger logger = LoggerFactory.getLogger(JobLogController.class);
-
-    @Resource
-    public JobInfoDao jobInfoDao;
+    //    @Resource
+//    public JobInfoDao jobInfoDao;
     @Resource
     public JobLogDao jobLogDao;
 

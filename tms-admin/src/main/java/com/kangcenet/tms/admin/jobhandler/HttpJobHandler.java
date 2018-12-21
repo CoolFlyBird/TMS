@@ -16,13 +16,7 @@ public class HttpJobHandler extends IJobHandler<TriggerParam> {
     private static Log log = LogFactory.getLog(ShellJobHandler.class);
 
     @Override
-    public Return<String> execute(TriggerParam param) throws Exception {
-//        OkHttpClient client = new OkHttpClient.Builder().build();
-//        Request request = new Request.Builder().url(param.getAddress() + param.getCommand()).build();
-//        Call call = client.newCall(request);
-//        Response response = call.execute();
-//        String result = response.body().string();
-//        log.info("response:" + result);
+    public Return<String> execute(TriggerParam param) {
         return HttpClientUtil.execute(param.getAddress(), param.getCommand());
     }
 }

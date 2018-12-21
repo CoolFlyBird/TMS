@@ -10,11 +10,15 @@ public class TriggerParam implements Serializable {
 
     // execute info
     private String executorHandler;
+    private String executorParams;
 
     //执行接口的地址
     private String address = "";
     //执行接口：api 或者 脚本命令
     private String command = "";
+
+    private int logId;
+    private long logDateTim;
 
     public String getId() {
         return id;
@@ -56,4 +60,27 @@ public class TriggerParam implements Serializable {
         this.command = command;
     }
 
+    public String getExecutorParams() {
+        return executorParams;
+    }
+
+    public void setExecutorParams(String executorParams) {
+        this.executorParams = executorParams;
+    }
+
+    public int getLogId() {
+        return logId;
+    }
+
+    public void setLogId(int logId) {
+        this.logId = logId;
+    }
+
+    public long getLogDateTim() {
+        return logDateTim;
+    }
+
+    public void setLogDateTim(long logDateTim) {
+        this.logDateTim = logDateTim;
+    }
 }

@@ -3,9 +3,9 @@ package com.kangcenet.tms.core.biz.model;
 import java.io.Serializable;
 
 public class Return<T> implements Serializable {
-    public static final int SUCCESS_CODE = 1000;
-    public static final int FAIL_CODE = 1001;
-    public static final Return<String> SUCCESS = new Return<String>(null);
+    public static final int SUCCESS_CODE = 200;
+    public static final int FAIL_CODE = 500;
+    public static final Return<String> SUCCESS = new Return<String>(SUCCESS_CODE, null);
     public static final Return<String> FAIL = new Return<String>(FAIL_CODE, null);
 
     private int code;

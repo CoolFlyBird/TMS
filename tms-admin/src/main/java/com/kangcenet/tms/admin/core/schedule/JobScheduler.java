@@ -8,6 +8,7 @@ import com.kangcenet.tms.admin.dao.JobInfoDao;
 import com.kangcenet.tms.admin.dao.JobLogDao;
 import com.kangcenet.tms.core.biz.ExecutorBiz;
 import com.kangcenet.tms.core.biz.impl.ExecutorBizImpl;
+import com.kangcenet.tms.core.thread.TriggerCallbackThread;
 import org.quartz.*;
 import org.quartz.impl.triggers.CronTriggerImpl;
 import org.springframework.beans.BeansException;
@@ -53,6 +54,7 @@ public class JobScheduler implements ApplicationContextAware {
 //        // admin registry monitor run
 //        JobRegistryMonitorHelper.getInstance().start();
 //        // admin monitor run
+        TriggerCallbackThread.getInstance().start();
         JobFailMonitorHelper.getInstance().start();
 //        // admin-server(spring-mvc)
 //        NetComServerFactory.putService(AdminBiz.class, XxlJobDynamicScheduler.adminBiz);
