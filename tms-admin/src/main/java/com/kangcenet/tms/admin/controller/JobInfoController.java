@@ -4,6 +4,7 @@ import com.kangcenet.tms.admin.core.model.JobInfo;
 import com.kangcenet.tms.admin.service.JobService;
 import com.kangcenet.tms.core.biz.model.Return;
 
+import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.stereotype.Controller;
 
 import org.springframework.web.bind.annotation.RequestMapping;

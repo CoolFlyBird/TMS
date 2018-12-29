@@ -34,21 +34,23 @@ public class JobTrigger {
         triggerParam.setAddress(jobInfo.getAddress());
         triggerParam.setCommand(jobInfo.getCommand());
         triggerParam.setExecutorHandler(jobInfo.getExecutorHandler());
+        triggerParam.setLogId(jobLog.getId());
+        triggerParam.setLogDateTim(jobLog.getTriggerTime().getTime());
+
         // 3、init address
 //        String address = null;
         // 4、trigger remote executor
 //        ReturnT<String> triggerResult = null;
         // 5、collection trigger info
-//        StringBuffer triggerMsgSb = new StringBuffer();
+        StringBuffer triggerMsgSb = new StringBuffer();
         // 6、save log trigger-info
 
         Return<String> triggerResult = runExecutor(triggerParam);
-
         jobLog.setExecutorAddress(jobInfo.getAddress());
         jobLog.setExecutorHandler(jobInfo.getExecutorHandler());
         jobLog.setExecutorParam(jobInfo.getCommand());
         jobLog.setTriggerCode(triggerResult.getCode());
-//        jobLog.setTriggerMsg(triggerMsgSb.toString());
+        jobLog.setTriggerMsg(triggerMsgSb.toString());
         JobScheduler.jobLogDao.updateTriggerInfo(jobLog);
 
         // 7、monitor trigger

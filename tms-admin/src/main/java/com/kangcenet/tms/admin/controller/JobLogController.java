@@ -75,7 +75,7 @@ public class JobLogController {
         HashMap map = new HashMap<String, Object>();
         map.put("triggerCode", jobLog.getTriggerCode());
         map.put("handleCode", jobLog.getHandleCode());
-        map.put("executorAddress", jobLog.getTriggerCode());
+        map.put("executorAddress", jobLog.getExecutorAddress());
         map.put("triggerTime", jobLog.getTriggerTime().getTime());
         map.put("logId", jobLog.getId());
         return new Return(map);

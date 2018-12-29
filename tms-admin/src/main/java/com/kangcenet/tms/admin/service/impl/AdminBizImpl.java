@@ -10,6 +10,7 @@ import com.kangcenet.tms.core.biz.model.Return;
 import com.kangcenet.tms.core.handler.IJobHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -43,6 +44,7 @@ public class AdminBizImpl implements AdminBiz {
     private Return<String> callback(HandleCallbackParam handleCallbackParam) {
         // valid log item
         JobLog log = xxlJobLogDao.load(handleCallbackParam.getLogId());
+        logger.info(">>>>>>>>> HandleCallbackParam {}-{}", handleCallbackParam.getLogId(), log);
         if (log == null) {
             return new Return<String>(Return.FAIL_CODE, "log item not found.");
         }

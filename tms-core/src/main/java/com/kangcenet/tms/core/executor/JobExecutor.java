@@ -16,7 +16,7 @@ public class JobExecutor implements ApplicationContextAware {
 
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
-        start();
+//        start();
     }
 
     public static ApplicationContext getApplicationContext() {

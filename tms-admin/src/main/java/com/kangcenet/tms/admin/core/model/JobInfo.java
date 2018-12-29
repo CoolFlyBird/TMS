@@ -17,6 +17,10 @@ public class JobInfo {
     private String author;        // 负责人
     private String alarmEmail = "1239985370@qq.com";    // 报警邮件
 
+    // copy from quartz
+    private String jobStatus;		// 任务状态 【base on quartz】
+
+
     public String getId() {
         return id;
     }
@@ -79,5 +83,13 @@ public class JobInfo {
 
     public void setAlarmEmail(String alarmEmail) {
         this.alarmEmail = alarmEmail;
+    }
+
+    public String getJobStatus() {
+        return jobStatus;
+    }
+
+    public void setJobStatus(String jobStatus) {
+        this.jobStatus = jobStatus;
     }
 }

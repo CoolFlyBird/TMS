@@ -246,12 +246,9 @@ public class JobScheduler implements ApplicationContextAware {
                 String cronExpression = ((CronTriggerImpl) trigger).getCronExpression();
                 jobInfo.setJobCron(cronExpression);
             }
-            //JobKey jobKey = new JobKey(jobInfo.getJobName(), String.valueOf(jobInfo.getJobGroup()));
-            //JobDetail jobDetail = scheduler.getJobDetail(jobKey);
-            //String jobClass = jobDetail.getJobClass().getName();
-//            if (triggerState!=null) {
-//                jobInfo.setJobStatus(triggerState.name());
-//            }
+            if (triggerState != null) {
+                jobInfo.setJobStatus(triggerState.name());
+            }
         } catch (SchedulerException e) {
 //            logger.error(e.getMessage(), e);
         }

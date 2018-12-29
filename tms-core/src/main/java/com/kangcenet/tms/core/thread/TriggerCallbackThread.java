@@ -9,6 +9,12 @@ import com.kangcenet.tms.core.util.FileUtil;
 import com.kangcenet.tms.core.util.JacksonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowire;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
 import javax.annotation.Resource;
 import java.io.File;
@@ -21,11 +27,15 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by xuxueli on 16/7/22.
  */
-public class TriggerCallbackThread {
-    @Resource
-    public AdminBiz adminBiz;
 
+public class TriggerCallbackThread implements ApplicationContextAware {
     private static Logger logger = LoggerFactory.getLogger(TriggerCallbackThread.class);
+
+    public static volatile AdminBiz adminBiz;
+
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        TriggerCallbackThread.adminBiz = applicationContext.getBean(AdminBiz.class);
+    }
 
     private static TriggerCallbackThread instance = new TriggerCallbackThread();
 
@@ -159,7 +169,6 @@ public class TriggerCallbackThread {
         try {
             logger.info("adminBiz {}", adminBiz);
             Return<String> callbackResult = adminBiz.callback(callbackParamList);
-            logger.info("adminBiz {}", adminBiz);
             if (callbackResult != null && Return.SUCCESS_CODE == callbackResult.getCode()) {
                 callbackLog(callbackParamList, "<br>----------- job callback finish.");
                 callbackRet = true;
@@ -229,5 +238,4 @@ public class TriggerCallbackThread {
             }
         }
     }
-
 }

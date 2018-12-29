@@ -139,6 +139,7 @@ public class JobThread extends Thread {
                 if (triggerParam != null) {
                     if (!toStop) {
                         // common
+                        logger.error("id:{}", triggerParam.getLogId());
                         TriggerCallbackThread.pushCallBack(new HandleCallbackParam(triggerParam.getLogId(), triggerParam.getLogDateTim(), executeResult));
                     } else {
                         // is killed
