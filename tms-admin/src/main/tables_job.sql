@@ -208,6 +208,20 @@ CREATE TABLE `JOB_QRTZ_TRIGGER_GROUP` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- INSERT INTO `JOB_QRTZ_TRIGGER_GROUP` ( `app_name`, `title`, `order`, `address_type`, `address_list`) values ( 'xxl-job-executor-sample', '示例执行器', '1', '0', null);
+CREATE TABLE `USER`  (
+  `username` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+  `password` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL,
+  `email` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL,
+  `role` set('ADMIN','J7W5','819') CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT '',
+  PRIMARY KEY (`username`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_bin ROW_FORMAT = Dynamic;
+
+CREATE TABLE `USER_TOKEN`  (
+  `token` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+  `username` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+  `expiration` bigint(255) NULL DEFAULT NULL,
+  PRIMARY KEY (`username`) USING BTREE,
+  CONSTRAINT `usertoken` FOREIGN KEY (`username`) REFERENCES `user` (`username`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_bin ROW_FORMAT = Dynamic;
 
 commit;
