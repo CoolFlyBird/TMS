@@ -23,6 +23,4 @@ public interface UserDao {
     public int delete(String user);
 
     public int setToken(HashMap map);
-
-
 }

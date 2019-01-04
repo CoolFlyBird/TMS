@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kangcenet.tms.admin.dao.JobGroupDao">
+    <resultMap id="JobGroup" type="com.kangcenet.tms.admin.core.model.JobGroup">
+        <result column="app_name" property="appName"/>
+        <result column="title" property="title"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+		t.app_name,
+		t.title
+	</sql>
+
+    <select id="pageList" resultMap="JobGroup">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM `JOB_GROUP` AS t
+        ORDER BY t.app_name DESC
+    </select>
+
+    <select id="select" parameterType="java.lang.String" resultMap="JobGroup">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM `JOB_GROUP` AS t
+        WHERE t.app_name = #{appName}
+    </select>
+
+    <insert id="create" parameterType="com.kangcenet.tms.admin.core.model.JobGroup">
+        INSERT INTO `JOB_GROUP` (
+        `app_name`,
+        `title`
+        ) VALUES (
+        #{appName},
+        #{title}
+        );
+    </insert>
+
+    <delete id="delete">
+		delete from `JOB_GROUP`
+		WHERE app_name = #{appName}
+	</delete>
+
+</mapper>

@@ -65,15 +65,14 @@
         `expiration` = #{expiration};
     </insert>
 
-
     <select id="loadUserInfo" parameterType="java.lang.String" resultMap="User">
         SELECT
         <include refid="Base_Column_List"/>
         FROM `USER` AS t
         WHERE t.username = (
-          SELECT `username`
-          FROM `USER_TOKEN`AS t2
-          WHERE t2.token = #{auth}
+        SELECT `username`
+        FROM `USER_TOKEN`AS t2
+        WHERE t2.token = #{auth}
         )
     </select>
 

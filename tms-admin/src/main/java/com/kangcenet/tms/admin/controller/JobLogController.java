@@ -27,8 +27,6 @@ import java.util.Map;
 @RequestMapping("/joblog")
 public class JobLogController {
     private static Logger logger = LoggerFactory.getLogger(JobLogController.class);
-    //    @Resource
-//    public JobInfoDao jobInfoDao;
     @Resource
     public JobLogDao jobLogDao;
 

@@ -1,5 +1,6 @@
 package com.kangcenet.tms.admin.controller;
 
+import com.kangcenet.tms.admin.core.model.JobGroup;
 import com.kangcenet.tms.admin.core.model.User;
 import com.kangcenet.tms.admin.core.util.MD5Util;
 import com.kangcenet.tms.admin.core.util.TokenUtil;
@@ -21,8 +22,8 @@ import java.util.Map;
 
 @Controller
 @RequestMapping("/user")
-public class IndexController {
-    private static Logger logger = LoggerFactory.getLogger(IndexController.class);
+public class UserController {
+    private static Logger logger = LoggerFactory.getLogger(UserController.class);
     private long TIME_EXPIRATION = 10 * 24 * 60 * 60 * 1000;
 
     @Autowired

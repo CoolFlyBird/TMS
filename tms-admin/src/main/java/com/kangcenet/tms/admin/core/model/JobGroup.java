@@ -2,18 +2,10 @@ package com.kangcenet.tms.admin.core.model;
 
 
 public class JobGroup {
-
-    private String id;
+    //819
     private String appName;
+    //显示名字
     private String title;
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
 
     public String getAppName() {
         return appName;
@@ -30,5 +22,4 @@ public class JobGroup {
     public void setTitle(String title) {
         this.title = title;
     }
-
 }
