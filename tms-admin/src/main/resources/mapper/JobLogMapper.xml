@@ -165,7 +165,7 @@
         WHERE job_id = #{jobId}
         <trim>
             <if test="jobGroup != null and jobGroup != ''">
-                AND t.job_group = #{jobGroup}
+                AND job_group = #{jobGroup}
             </if>
         </trim>
     </delete>
@@ -209,10 +209,10 @@
                 SELECT id FROM job_qrtz_trigger_log AS t
                 <trim prefix="WHERE" prefixOverrides="AND | OR">
                     <if test="jobGroup != null and jobGroup != ''">
-                        AND t.job_group = #{jobGroup}
+                        AND job_group = #{jobGroup}
                     </if>
                     <if test="jobId != null and jobId != ''">
-                        AND t.job_id = #{jobId}
+                        AND job_id = #{jobId}
                     </if>
                 </trim>
                 ORDER BY t.trigger_time desc

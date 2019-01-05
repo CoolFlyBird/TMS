@@ -118,6 +118,7 @@ public class JobServiceImpl implements JobService {
 
     @Override
     public Return<String> remove(String jobGroup, String id) {
+        logger.error("remove:{},{}", jobGroup, id);
         JobInfo xxlJobInfo = jobInfoDao.loadById(jobGroup, id);
         String group = String.valueOf(xxlJobInfo.getJobGroup());
         String name = String.valueOf(xxlJobInfo.getId());

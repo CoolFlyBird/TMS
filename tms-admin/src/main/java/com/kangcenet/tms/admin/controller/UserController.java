@@ -47,6 +47,7 @@ public class UserController {
         map.put("username", username);
         map.put("password", md5Password);
         User user = userDao.select(map);
+        logger.error("username:{},md5Password{}", username, md5Password);
         if (user == null) {
             if (username.equals(JobAdminConfig.USER)
                     && password.equals(JobAdminConfig.PASSWORD)) {

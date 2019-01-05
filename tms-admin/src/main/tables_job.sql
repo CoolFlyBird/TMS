@@ -1,214 +1,215 @@
-create table job_qrtz_job_details
+CREATE TABLE JOB_QRTZ_JOB_DETAILS
   (
-    sched_name varchar(120) not null,
-    job_name  varchar(200) not null,
-    job_group varchar(200) not null,
-    description varchar(250) null,
-    job_class_name   varchar(250) not null,
-    is_durable varchar(1) not null,
-    is_nonconcurrent varchar(1) not null,
-    is_update_data varchar(1) not null,
-    requests_recovery varchar(1) not null,
-    job_data blob null,
-    primary key (sched_name,job_name,job_group)
+    SCHED_NAME VARCHAR(120) NOT NULL,
+    JOB_NAME  VARCHAR(200) NOT NULL,
+    JOB_GROUP VARCHAR(200) NOT NULL,
+    DESCRIPTION VARCHAR(250) NULL,
+    JOB_CLASS_NAME   VARCHAR(250) NOT NULL,
+    IS_DURABLE VARCHAR(1) NOT NULL,
+    IS_NONCONCURRENT VARCHAR(1) NOT NULL,
+    IS_UPDATE_DATA VARCHAR(1) NOT NULL,
+    REQUESTS_RECOVERY VARCHAR(1) NOT NULL,
+    JOB_DATA BLOB NULL,
+    PRIMARY KEY (SCHED_NAME,JOB_NAME,JOB_GROUP)
 );
 
-create table job_qrtz_triggers
+CREATE TABLE JOB_QRTZ_TRIGGERS
   (
-    sched_name varchar(120) not null,
-    trigger_name varchar(200) not null,
-    trigger_group varchar(200) not null,
-    job_name  varchar(200) not null,
-    job_group varchar(200) not null,
-    description varchar(250) null,
-    next_fire_time bigint(13) null,
-    prev_fire_time bigint(13) null,
-    priority integer null,
-    trigger_state varchar(16) not null,
-    trigger_type varchar(8) not null,
-    start_time bigint(13) not null,
-    end_time bigint(13) null,
-    calendar_name varchar(200) null,
-    misfire_instr smallint(2) null,
-    job_data blob null,
-    primary key (sched_name,trigger_name,trigger_group),
-    foreign key (sched_name,job_name,job_group)
-        references job_qrtz_job_details(sched_name,job_name,job_group)
+    SCHED_NAME VARCHAR(120) NOT NULL,
+    TRIGGER_NAME VARCHAR(200) NOT NULL,
+    TRIGGER_GROUP VARCHAR(200) NOT NULL,
+    JOB_NAME  VARCHAR(200) NOT NULL,
+    JOB_GROUP VARCHAR(200) NOT NULL,
+    DESCRIPTION VARCHAR(250) NULL,
+    NEXT_FIRE_TIME BIGINT(13) NULL,
+    PREV_FIRE_TIME BIGINT(13) NULL,
+    PRIORITY INTEGER NULL,
+    TRIGGER_STATE VARCHAR(16) NOT NULL,
+    TRIGGER_TYPE VARCHAR(8) NOT NULL,
+    START_TIME BIGINT(13) NOT NULL,
+    END_TIME BIGINT(13) NULL,
+    CALENDAR_NAME VARCHAR(200) NULL,
+    MISFIRE_INSTR SMALLINT(2) NULL,
+    JOB_DATA BLOB NULL,
+    PRIMARY KEY (SCHED_NAME,TRIGGER_NAME,TRIGGER_GROUP),
+    FOREIGN KEY (SCHED_NAME,JOB_NAME,JOB_GROUP)
+        REFERENCES JOB_QRTZ_JOB_DETAILS(SCHED_NAME,JOB_NAME,JOB_GROUP)
 );
 
-create table job_qrtz_simple_triggers
-  (
-    sched_name varchar(120) not null,
-    trigger_name varchar(200) not null,
-    trigger_group varchar(200) not null,
-    repeat_count bigint(7) not null,
-    repeat_interval bigint(12) not null,
-    times_triggered bigint(10) not null,
-    primary key (sched_name,trigger_name,trigger_group),
-    foreign key (sched_name,trigger_name,trigger_group)
-        references job_qrtz_triggers(sched_name,trigger_name,trigger_group)
-);
-
-create table job_qrtz_cron_triggers
-  (
-    sched_name varchar(120) not null,
-    trigger_name varchar(200) not null,
-    trigger_group varchar(200) not null,
-    cron_expression varchar(200) not null,
-    time_zone_id varchar(80),
-    primary key (sched_name,trigger_name,trigger_group),
-    foreign key (sched_name,trigger_name,trigger_group)
-        references job_qrtz_triggers(sched_name,trigger_name,trigger_group)
-);
-
--- create table job_qrtz_simprop_triggers
+-- CREATE TABLE JOB_QRTZ_SIMPLE_TRIGGERS
 --   (
---     sched_name varchar(120) not null,
---     trigger_name varchar(200) not null,
---     trigger_group varchar(200) not null,
---     str_prop_1 varchar(512) null,
---     str_prop_2 varchar(512) null,
---     str_prop_3 varchar(512) null,
---     int_prop_1 int null,
---     int_prop_2 int null,
---     long_prop_1 bigint null,
---     long_prop_2 bigint null,
---     dec_prop_1 numeric(13,4) null,
---     dec_prop_2 numeric(13,4) null,
---     bool_prop_1 varchar(1) null,
---     bool_prop_2 varchar(1) null,
---     primary key (sched_name,trigger_name,trigger_group),
---     foreign key (sched_name,trigger_name,trigger_group)
---     references job_qrtz_triggers(sched_name,trigger_name,trigger_group)
+--     SCHED_NAME VARCHAR(120) NOT NULL,
+--     TRIGGER_NAME VARCHAR(200) NOT NULL,
+--     TRIGGER_GROUP VARCHAR(200) NOT NULL,
+--     REPEAT_COUNT BIGINT(7) NOT NULL,
+--     REPEAT_INTERVAL BIGINT(12) NOT NULL,
+--     TIMES_TRIGGERED BIGINT(10) NOT NULL,
+--     PRIMARY KEY (SCHED_NAME,TRIGGER_NAME,TRIGGER_GROUP),
+--     FOREIGN KEY (SCHED_NAME,TRIGGER_NAME,TRIGGER_GROUP)
+--         REFERENCES JOB_QRTZ_TRIGGERS(SCHED_NAME,TRIGGER_NAME,TRIGGER_GROUP)
 -- );
 
-create table job_qrtz_blob_triggers
+CREATE TABLE JOB_QRTZ_CRON_TRIGGERS
   (
-    sched_name varchar(120) not null,
-    trigger_name varchar(200) not null,
-    trigger_group varchar(200) not null,
-    blob_data blob null,
-    primary key (sched_name,trigger_name,trigger_group),
-    foreign key (sched_name,trigger_name,trigger_group)
-        references job_qrtz_triggers(sched_name,trigger_name,trigger_group)
+    SCHED_NAME VARCHAR(120) NOT NULL,
+    TRIGGER_NAME VARCHAR(200) NOT NULL,
+    TRIGGER_GROUP VARCHAR(200) NOT NULL,
+    CRON_EXPRESSION VARCHAR(200) NOT NULL,
+    TIME_ZONE_ID VARCHAR(80),
+    PRIMARY KEY (SCHED_NAME,TRIGGER_NAME,TRIGGER_GROUP),
+    FOREIGN KEY (SCHED_NAME,TRIGGER_NAME,TRIGGER_GROUP)
+        REFERENCES JOB_QRTZ_TRIGGERS(SCHED_NAME,TRIGGER_NAME,TRIGGER_GROUP)
 );
 
--- create table job_qrtz_calendars
+-- CREATE TABLE JOB_QRTZ_SIMPROP_TRIGGERS
 --   (
---     sched_name varchar(120) not null,
---     calendar_name  varchar(200) not null,
---     calendar blob not null,
---     primary key (sched_name,calendar_name)
+--     SCHED_NAME VARCHAR(120) NOT NULL,
+--     TRIGGER_NAME VARCHAR(200) NOT NULL,
+--     TRIGGER_GROUP VARCHAR(200) NOT NULL,
+--     STR_PROP_1 VARCHAR(512) NULL,
+--     STR_PROP_2 VARCHAR(512) NULL,
+--     STR_PROP_3 VARCHAR(512) NULL,
+--     INT_PROP_1 INT NULL,
+--     INT_PROP_2 INT NULL,
+--     LONG_PROP_1 BIGINT NULL,
+--     LONG_PROP_2 BIGINT NULL,
+--     DEC_PROP_1 NUMERIC(13,4) NULL,
+--     DEC_PROP_2 NUMERIC(13,4) NULL,
+--     BOOL_PROP_1 VARCHAR(1) NULL,
+--     BOOL_PROP_2 VARCHAR(1) NULL,
+--     PRIMARY KEY (SCHED_NAME,TRIGGER_NAME,TRIGGER_GROUP),
+--     FOREIGN KEY (SCHED_NAME,TRIGGER_NAME,TRIGGER_GROUP)
+--     REFERENCES JOB_QRTZ_TRIGGERS(SCHED_NAME,TRIGGER_NAME,TRIGGER_GROUP)
 -- );
---
-create table job_qrtz_paused_trigger_grps
+
+CREATE TABLE JOB_QRTZ_BLOB_TRIGGERS
   (
-    sched_name varchar(120) not null,
-    trigger_group  varchar(200) not null,
-    primary key (sched_name,trigger_group)
+    SCHED_NAME VARCHAR(120) NOT NULL,
+    TRIGGER_NAME VARCHAR(200) NOT NULL,
+    TRIGGER_GROUP VARCHAR(200) NOT NULL,
+    BLOB_DATA BLOB NULL,
+    PRIMARY KEY (SCHED_NAME,TRIGGER_NAME,TRIGGER_GROUP),
+    FOREIGN KEY (SCHED_NAME,TRIGGER_NAME,TRIGGER_GROUP)
+        REFERENCES JOB_QRTZ_TRIGGERS(SCHED_NAME,TRIGGER_NAME,TRIGGER_GROUP)
 );
 
-create table job_qrtz_fired_triggers
-  (
-    sched_name varchar(120) not null,
-    entry_id varchar(95) not null,
-    trigger_name varchar(200) not null,
-    trigger_group varchar(200) not null,
-    instance_name varchar(200) not null,
-    fired_time bigint(13) not null,
-    sched_time bigint(13) not null,
-    priority integer not null,
-    state varchar(16) not null,
-    job_name varchar(200) null,
-    job_group varchar(200) null,
-    is_nonconcurrent varchar(1) null,
-    requests_recovery varchar(1) null,
-    primary key (sched_name,entry_id)
-);
-
--- create table job_qrtz_scheduler_state
+-- CREATE TABLE JOB_QRTZ_CALENDARS
 --   (
---     sched_name varchar(120) not null,
---     instance_name varchar(200) not null,
---     last_checkin_time bigint(13) not null,
---     checkin_interval bigint(13) not null,
---     primary key (sched_name,instance_name)
+--     SCHED_NAME VARCHAR(120) NOT NULL,
+--     CALENDAR_NAME  VARCHAR(200) NOT NULL,
+--     CALENDAR BLOB NOT NULL,
+--     PRIMARY KEY (SCHED_NAME,CALENDAR_NAME)
 -- );
 --
-create table job_qrtz_locks
+CREATE TABLE JOB_QRTZ_PAUSED_TRIGGER_GRPS
   (
-    sched_name varchar(120) not null,
-    lock_name  varchar(40) not null,
-    primary key (sched_name,lock_name)
+    SCHED_NAME VARCHAR(120) NOT NULL,
+    TRIGGER_GROUP  VARCHAR(200) NOT NULL,
+    PRIMARY KEY (SCHED_NAME,TRIGGER_GROUP)
 );
 
-create table `job_qrtz_trigger_info` (
-  `id` int(11) not null auto_increment,
-  `job_group` int(11) not null comment '执行器主键id',
-  `job_cron` varchar(128) not null comment '任务执行cron',
-  `job_desc` varchar(255) not null,
-	`address` varchar(255) not null,
-	`command` text not null,
-  `add_time` datetime default null,
-  `update_time` datetime default null,
-  `author` varchar(64) default null comment '作者',
-  `alarm_email` varchar(255) default null comment '报警邮件',
-  `executor_handler` varchar(255) default null comment '执行器任务handler',
-  primary key (`id`)
-) engine=innodb default charset=utf8;
+CREATE TABLE JOB_QRTZ_FIRED_TRIGGERS
+  (
+    SCHED_NAME VARCHAR(120) NOT NULL,
+    ENTRY_ID VARCHAR(95) NOT NULL,
+    TRIGGER_NAME VARCHAR(200) NOT NULL,
+    TRIGGER_GROUP VARCHAR(200) NOT NULL,
+    INSTANCE_NAME VARCHAR(200) NOT NULL,
+    FIRED_TIME BIGINT(13) NOT NULL,
+    SCHED_TIME BIGINT(13) NOT NULL,
+    PRIORITY INTEGER NOT NULL,
+    STATE VARCHAR(16) NOT NULL,
+    JOB_NAME VARCHAR(200) NULL,
+    JOB_GROUP VARCHAR(200) NULL,
+    IS_NONCONCURRENT VARCHAR(1) NULL,
+    REQUESTS_RECOVERY VARCHAR(1) NULL,
+    PRIMARY KEY (SCHED_NAME,ENTRY_ID)
+);
 
-create table `job_qrtz_trigger_log` (
-  `id` int(11) not null auto_increment,
-  `job_group` int(11) not null comment '执行器主键id',
-  `job_id` int(11) not null comment '任务，主键id',
-  `executor_address` varchar(255) default null comment '执行器地址，本次执行的地址',
-  `executor_handler` varchar(255) default null comment '执行器任务handler',
-  `executor_param` varchar(512) default null comment '执行器任务参数',
+-- CREATE TABLE JOB_QRTZ_SCHEDULER_STATE
+--   (
+--     SCHED_NAME VARCHAR(120) NOT NULL,
+--     INSTANCE_NAME VARCHAR(200) NOT NULL,
+--     LAST_CHECKIN_TIME BIGINT(13) NOT NULL,
+--     CHECKIN_INTERVAL BIGINT(13) NOT NULL,
+--     PRIMARY KEY (SCHED_NAME,INSTANCE_NAME)
+-- );
+--
+CREATE TABLE JOB_QRTZ_LOCKS
+  (
+    SCHED_NAME VARCHAR(120) NOT NULL,
+    LOCK_NAME  VARCHAR(40) NOT NULL,
+    PRIMARY KEY (SCHED_NAME,LOCK_NAME)
+);
 
--- 	`executor_sharding_param` varchar(20) default null comment '执行器任务分片参数，格式如 1/2',
---   `executor_fail_retry_count` int(11) not null default '0' comment '失败重试次数',
+CREATE TABLE `JOB_QRTZ_TRIGGER_INFO` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `job_group` int(11) NOT NULL COMMENT '执行器主键ID',
+  `job_cron` varchar(128) NOT NULL COMMENT '任务执行CRON',
+  `job_desc` varchar(255) NOT NULL,
+	`address` varchar(255) NOT NULL,
+	`command` text NOT NULL,
+  `add_time` datetime DEFAULT NULL,
+  `update_time` datetime DEFAULT NULL,
+  `author` varchar(64) DEFAULT NULL COMMENT '作者',
+  `alarm_email` varchar(255) DEFAULT NULL COMMENT '报警邮件',
+  `executor_handler` varchar(255) DEFAULT NULL COMMENT '执行器任务handler',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-	`trigger_time` datetime default null comment '调度-时间',
-  `trigger_code` int(11) not null comment '调度-结果',
-  `trigger_msg` text comment '调度-日志',
-  `handle_time` datetime default null comment '执行-时间',
-  `handle_code` int(11) not null comment '执行-状态',
-  `handle_msg` text comment '执行-日志',
-  primary key (`id`),
-  key `i_trigger_time` (`trigger_time`)
-) engine=innodb default charset=utf8;
+CREATE TABLE `JOB_QRTZ_TRIGGER_LOG` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `job_group` int(11) NOT NULL COMMENT '执行器主键ID',
+  `job_id` int(11) NOT NULL COMMENT '任务，主键ID',
+  `executor_address` varchar(255) DEFAULT NULL COMMENT '执行器地址，本次执行的地址',
+  `executor_handler` varchar(255) DEFAULT NULL COMMENT '执行器任务handler',
+  `executor_param` varchar(512) DEFAULT NULL COMMENT '执行器任务参数',
 
--- create table `job_qrtz_trigger_logglue` (
---   `id` int(11) not null auto_increment,
---   `job_id` int(11) not null comment '任务，主键id',
---   `glue_type` varchar(50) default null comment 'glue类型',
---   `glue_source` mediumtext comment 'glue源代码',
---   `glue_remark` varchar(128) not null comment 'glue备注',
---   `add_time` timestamp null default null,
---   `update_time` timestamp null default null on update current_timestamp,
---   primary key (`id`)
--- ) engine=innodb default charset=utf8;
+-- 	`executor_sharding_param` varchar(20) DEFAULT NULL COMMENT '执行器任务分片参数，格式如 1/2',
+--   `executor_fail_retry_count` int(11) NOT NULL DEFAULT '0' COMMENT '失败重试次数',
 
--- create table job_qrtz_trigger_registry (
---   `id` int(11) not null auto_increment,
---   `registry_group` varchar(255) not null,
---   `registry_key` varchar(255) not null,
---   `registry_value` varchar(255) not null,
---   `update_time` timestamp not null default current_timestamp,
---   primary key (`id`)
--- ) engine=innodb default charset=utf8;
+	`trigger_time` datetime DEFAULT NULL COMMENT '调度-时间',
+  `trigger_code` int(11) NOT NULL COMMENT '调度-结果',
+  `trigger_msg` text COMMENT '调度-日志',
+  `handle_time` datetime DEFAULT NULL COMMENT '执行-时间',
+  `handle_code` int(11) NOT NULL COMMENT '执行-状态',
+  `handle_msg` text COMMENT '执行-日志',
+  PRIMARY KEY (`id`),
+  KEY `I_trigger_time` (`trigger_time`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-create table `job_qrtz_trigger_group` (
-  `id` int(11) not null auto_increment,
-  `app_name` varchar(64) not null comment '执行器appname',
-  `title` varchar(12) not null comment '执行器名称',
-  `order` tinyint(4) not null default '0' comment '排序',
-  `address_type` tinyint(4) not null default '0' comment '执行器地址类型：0=自动注册、1=手动录入',
-  `address_list` varchar(512) default null comment '执行器地址列表，多地址逗号分隔',
-  primary key (`id`)
-) engine=innodb default charset=utf8;
+-- CREATE TABLE `JOB_QRTZ_TRIGGER_LOGGLUE` (
+--   `id` int(11) NOT NULL AUTO_INCREMENT,
+--   `job_id` int(11) NOT NULL COMMENT '任务，主键ID',
+--   `glue_type` varchar(50) DEFAULT NULL COMMENT 'GLUE类型',
+--   `glue_source` mediumtext COMMENT 'GLUE源代码',
+--   `glue_remark` varchar(128) NOT NULL COMMENT 'GLUE备注',
+--   `add_time` timestamp NULL DEFAULT NULL,
+--   `update_time` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+--   PRIMARY KEY (`id`)
+-- ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-create table `user`  (
+-- CREATE TABLE JOB_QRTZ_TRIGGER_REGISTRY (
+--   `id` int(11) NOT NULL AUTO_INCREMENT,
+--   `registry_group` varchar(255) NOT NULL,
+--   `registry_key` varchar(255) NOT NULL,
+--   `registry_value` varchar(255) NOT NULL,
+--   `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+--   PRIMARY KEY (`id`)
+-- ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `JOB_QRTZ_TRIGGER_GROUP` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `app_name` varchar(64) NOT NULL COMMENT '执行器AppName',
+  `title` varchar(12) NOT NULL COMMENT '执行器名称',
+  `order` tinyint(4) NOT NULL DEFAULT '0' COMMENT '排序',
+  `address_type` tinyint(4) NOT NULL DEFAULT '0' COMMENT '执行器地址类型：0=自动注册、1=手动录入',
+  `address_list` varchar(512) DEFAULT NULL COMMENT '执行器地址列表，多地址逗号分隔',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE `USER`  (
   `username` varchar(255) character set utf8 collate utf8_bin not null,
   `password` varchar(255) character set utf8 collate utf8_bin null default null,
   `email` varchar(255) character set utf8 collate utf8_bin null default null,
@@ -216,7 +217,7 @@ create table `user`  (
   primary key (`username`) using btree
 ) engine=innodb default charset=utf8;
 
-create table `user_token`  (
+CREATE TABLE `USER_TOKEN`  (
   `token` varchar(255) character set utf8 collate utf8_bin not null,
   `username` varchar(255) character set utf8 collate utf8_bin not null,
   `expiration` bigint(255) null default null,
@@ -224,7 +225,7 @@ create table `user_token`  (
   constraint `usertoken` foreign key (`username`) references `user` (`username`) on delete cascade on update cascade
 ) engine=innodb default charset=utf8;
 
-create table `job_group`  (
+CREATE TABLE `JOB_GROUP`  (
   `app_name` varchar(255) character set utf8 collate utf8_general_ci not null,
   `title` varchar(255) character set utf8 collate utf8_bin not null,
   primary key (`app_name`) using btree

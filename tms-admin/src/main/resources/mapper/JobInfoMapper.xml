@@ -99,7 +99,7 @@
         WHERE id = #{id}
         <trim>
             <if test="jobGroup != null and jobGroup != ''">
-                AND t.job_group = #{jobGroup}
+                AND job_group = #{jobGroup}
             </if>
         </trim>
     </delete>
