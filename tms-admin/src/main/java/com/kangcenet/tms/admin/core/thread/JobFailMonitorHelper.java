@@ -54,7 +54,7 @@ public class JobFailMonitorHelper {
                                 if (jobLogId == null || jobLogId == 0) {
                                     continue;
                                 }
-                                JobLog log = JobScheduler.jobLogDao.load(jobLogId);
+                                JobLog log = JobScheduler.jobLogDao.load(null,jobLogId);
                                 if (log == null) {
                                     continue;
                                 }
@@ -71,7 +71,7 @@ public class JobFailMonitorHelper {
                                     if (IJobHandler.FAIL.getCode() == log.getTriggerCode()
                                             || IJobHandler.FAIL.getCode() == log.getHandleCode()) {
                                         // job fail,
-                                        JobInfo info = JobScheduler.jobInfoDao.loadById(log.getJobId());
+                                        JobInfo info = JobScheduler.jobInfoDao.loadById(null,log.getJobId());
                                         JobScheduler.jobLogDao.updateTriggerInfo(log);
 
                                         // 1、fail retry
@@ -101,10 +101,10 @@ public class JobFailMonitorHelper {
                 int drainToNum = getInstance().queue.drainTo(jobLogIdList);
                 if (jobLogIdList != null && jobLogIdList.size() > 0) {
                     for (Integer jobLogId : jobLogIdList) {
-                        JobLog log = JobScheduler.jobLogDao.load(jobLogId);
+                        JobLog log = JobScheduler.jobLogDao.load(null,jobLogId);
                         if (Return.FAIL_CODE == log.getTriggerCode() || Return.FAIL_CODE == log.getHandleCode()) {
                             // job fail,
-                            JobInfo info = JobScheduler.jobInfoDao.loadById(log.getJobId());
+                            JobInfo info = JobScheduler.jobInfoDao.loadById(null,log.getJobId());
                             try {
                                 failAlarm(info, log);
                             } catch (EmailException e) {

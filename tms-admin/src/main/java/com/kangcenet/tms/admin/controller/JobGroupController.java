@@ -1,5 +1,6 @@
 package com.kangcenet.tms.admin.controller;
 
+import com.kangcenet.tms.admin.core.conf.JobAdminConfig;
 import com.kangcenet.tms.admin.core.model.JobGroup;
 import com.kangcenet.tms.admin.core.model.User;
 import com.kangcenet.tms.admin.dao.JobGroupDao;
@@ -58,6 +59,7 @@ public class JobGroupController {
     public Return create(@RequestHeader(value = "Authorization", required = false) String auth, @RequestParam Map<String, String> params) {
         User admin = userDao.loadUserInfo(auth);
         if (admin == null || !admin.checkAdmin()) {
+            logger.error("admin:{},{}", JobAdminConfig.USER, admin.getRole());
             return new Return(Return.FAIL_CODE, "管理员才能创建项目！");
         }
         String appName = params.get("appName");

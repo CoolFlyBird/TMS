@@ -8,9 +8,11 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-
     <artifactId>tms-admin</artifactId>
     <packaging>war</packaging>
+    <build>
+        <finalName>tms</finalName>
+    </build>
 
     <dependencies>
         <dependency>

@@ -26,14 +26,12 @@ public interface JobInfoDao {
 
     public int save(JobInfo info);
 
-    public JobInfo loadById(@Param("id") String id);
-
     public int update(JobInfo item);
 
-    public int delete(@Param("id") String id);
+    public int delete(@Param("jobGroup") String jobGroup, @Param("id") String id);
+
+    public JobInfo loadById(@Param("jobGroup") String jobGroup, @Param("id") String id);
 
     public int findAllCount();
-
-    public List<JobInfo> getJobsByGroup(@Param("jobGroup") String jobGroup);
 
 }

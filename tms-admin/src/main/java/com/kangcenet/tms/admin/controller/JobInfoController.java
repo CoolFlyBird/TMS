@@ -1,22 +1,26 @@
 package com.kangcenet.tms.admin.controller;
 
 import com.kangcenet.tms.admin.core.model.JobInfo;
+import com.kangcenet.tms.admin.core.model.User;
+import com.kangcenet.tms.admin.dao.UserDao;
 import com.kangcenet.tms.admin.service.JobService;
 import com.kangcenet.tms.core.biz.model.Return;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.annotation.Resource;
-import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 @Controller
 @RequestMapping("/job")
 public class JobInfoController {
-    @Resource
+
+    @Autowired
+    private UserDao userDao;
+    @Autowired
     private JobService jobService;
 
     @ResponseBody
@@ -27,23 +31,37 @@ public class JobInfoController {
 
     @RequestMapping("/pageList")
     @ResponseBody
-    public Map<String, Object> pageList(@RequestParam(required = false, defaultValue = "0") int start,
-                                        @RequestParam(required = false, defaultValue = "10") int length,
-                                        String jobGroup, String jobDesc, String executorHandler, String filterTime) {
-        return jobService.pageList(start, length, jobGroup, jobDesc, executorHandler, filterTime);
+    public Return pageList(
+            @RequestHeader(value = "Authorization", required = false) String auth,
+            @RequestParam(required = false, defaultValue = "0") int start,
+            @RequestParam(required = false, defaultValue = "10") int length,
+            String jobDesc, String executorHandler) {
+        User user = userDao.loadUserInfo(auth);
+        if (user == null || user.getRole() == null) {
+            return new Return(Return.FAIL_CODE, "该账号未绑定项目！");
+        }
+        Map<String, Object> map = jobService.pageList(start, length, user.getRole(), jobDesc, executorHandler);
+        return new Return(map);
     }
 
 
     @ResponseBody
     @RequestMapping("/add")
-    public Return<String> addJob(@RequestParam Map<String, String> params) {
+    public Return<String> addJob(
+            @RequestHeader(value = "Authorization", required = false) String auth,
+            @RequestParam Map<String, String> params) {
+        User user = userDao.loadUserInfo(auth);
+        if (user == null || user.getRole() == null) {
+            return new Return(Return.FAIL_CODE, "该账号未绑定项目！");
+        }
         JobInfo jobInfo = null;
         Return<String> result = null;
         try {
             jobInfo = parseJobInfo(params);
+            jobInfo.setJobGroup(user.getRole());
             result = jobService.add(jobInfo);
         } catch (Exception e) {
-            result = new Return<String>(e.getMessage());
+            result = new Return(e.getMessage());
             e.printStackTrace();
         }
         return result;
@@ -51,10 +69,17 @@ public class JobInfoController {
 
     @RequestMapping("/update")
     @ResponseBody
-    public Return<String> update(@RequestParam Map<String, String> params) {
+    public Return<String> update(
+            @RequestHeader(value = "Authorization", required = false) String auth,
+            @RequestParam Map<String, String> params) {
+        User user = userDao.loadUserInfo(auth);
+        if (user == null || user.getRole() == null) {
+            return new Return(Return.FAIL_CODE, "该账号未绑定项目！");
+        }
         JobInfo jobInfo = null;
         try {
             jobInfo = parseJobInfo(params);
+            jobInfo.setJobGroup(user.getRole());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -63,44 +88,56 @@ public class JobInfoController {
 
     @RequestMapping("/remove")
     @ResponseBody
-    public Return<String> remove(@RequestParam Map<String, String> params) {
+    public Return<String> remove(
+            @RequestHeader(value = "Authorization", required = false) String auth,
+            @RequestParam Map<String, String> params) {
+        User user = userDao.loadUserInfo(auth);
+        if (user == null || user.getRole() == null) {
+            return new Return(Return.FAIL_CODE, "该账号未绑定项目！");
+        }
         String id = params.get("id");
-        return jobService.remove(id);
+        return jobService.remove(user.getRole(), id);
     }
 
     @RequestMapping("/pause")
     @ResponseBody
-    public Return<String> pause(@RequestParam Map<String, String> params) {
+    public Return<String> pause(
+            @RequestHeader(value = "Authorization", required = false) String auth,
+            @RequestParam Map<String, String> params) {
+        User user = userDao.loadUserInfo(auth);
+        if (user == null || user.getRole() == null) {
+            return new Return(Return.FAIL_CODE, "该账号未绑定项目！");
+        }
         String id = params.get("id");
-        return jobService.pause(id);
+        return jobService.pause(user.getRole(), id);
     }
 
     @RequestMapping("/resume")
     @ResponseBody
-    public Return<String> resume(@RequestParam Map<String, String> params) {
+    public Return<String> resume(
+            @RequestHeader(value = "Authorization", required = false) String auth,
+            @RequestParam Map<String, String> params) {
+        User user = userDao.loadUserInfo(auth);
+        if (user == null || user.getRole() == null) {
+            return new Return(Return.FAIL_CODE, "该账号未绑定项目！");
+        }
         String id = params.get("id");
-        return jobService.resume(id);
+        return jobService.resume(user.getRole(), id);
     }
 
-    @RequestMapping("/getJobsByGroup")
-    @ResponseBody
-    public Return<List<JobInfo>> getJobsByGroup(@RequestParam String jobGroup) {
-        return jobService.getJobsByGroup(jobGroup);
-    }
-
-    @RequestMapping("/dashboard")
-    @ResponseBody
-    public Return<String> dashboardInfo() {
-        Map<String, Object> dashboardMap = jobService.dashboardInfo();
-        return new Return(dashboardMap);
-    }
-
-    @RequestMapping("/chartInfo")
-    @ResponseBody
-    public Return<Map<String, Object>> chartInfo(Date startDate, Date endDate) {
-        Return<Map<String, Object>> chartInfo = jobService.chartInfo(startDate, endDate);
-        return chartInfo;
-    }
+//    @RequestMapping("/dashboard")
+//    @ResponseBody
+//    public Return<String> dashboardInfo() {
+//        Map<String, Object> dashboardMap = jobService.dashboardInfo();
+//        return new Return(dashboardMap);
+//    }
+//
+//    @RequestMapping("/chartInfo")
+//    @ResponseBody
+//    public Return<Map<String, Object>> chartInfo(Date startDate, Date endDate) {
+//        Return<Map<String, Object>> chartInfo = jobService.chartInfo(startDate, endDate);
+//        return chartInfo;
+//    }
 
 
     private JobInfo parseJobInfo(Map<String, String> params) throws Exception {
@@ -117,10 +154,8 @@ public class JobInfoController {
         String command = params.get("command");//api/脚本命令
 
         String id = params.get("id");
-        String jobGroup = params.get("jobGroup");
 
         jobInfo.setId(id);
-        jobInfo.setJobGroup(jobGroup);
         jobInfo.setJobDesc(desc);
         jobInfo.setExecutorHandler(handler);
         jobInfo.setJobCron(cron);

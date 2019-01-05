@@ -22,4 +22,5 @@ public class JobGroup {
     public void setTitle(String title) {
         this.title = title;
     }
+
 }

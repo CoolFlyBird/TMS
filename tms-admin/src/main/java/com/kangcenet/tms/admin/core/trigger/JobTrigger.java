@@ -12,7 +12,7 @@ import java.util.Date;
 
 public class JobTrigger {
     public static void trigger(String jobId) {
-        JobInfo jobInfo = JobScheduler.jobInfoDao.loadById(jobId);
+        JobInfo jobInfo = JobScheduler.jobInfoDao.loadById(null,jobId);
         if (jobInfo == null) {
             return;
         }

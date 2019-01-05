@@ -15,19 +15,19 @@
     <select id="pageList" resultMap="JobGroup">
         SELECT
         <include refid="Base_Column_List"/>
-        FROM `JOB_GROUP` AS t
+        FROM `job_group` AS t
         ORDER BY t.app_name DESC
     </select>
 
     <select id="select" parameterType="java.lang.String" resultMap="JobGroup">
         SELECT
         <include refid="Base_Column_List"/>
-        FROM `JOB_GROUP` AS t
+        FROM `job_group` AS t
         WHERE t.app_name = #{appName}
     </select>
 
     <insert id="create" parameterType="com.kangcenet.tms.admin.core.model.JobGroup">
-        INSERT INTO `JOB_GROUP` (
+        INSERT INTO `job_group` (
         `app_name`,
         `title`
         ) VALUES (
@@ -37,7 +37,7 @@
     </insert>
 
     <delete id="delete">
-		delete from `JOB_GROUP`
+		DELETE FROM `job_group`
 		WHERE app_name = #{appName}
 	</delete>
 

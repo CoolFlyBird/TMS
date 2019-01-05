@@ -15,9 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import java.util.*;
@@ -33,7 +30,7 @@ public class JobServiceImpl implements JobService {
     public JobLogDao jobLogDao;
 
     @Override
-    public Map<String, Object> pageList(int start, int length, String jobGroup, String jobDesc, String executorHandler, String filterTime) {
+    public Map<String, Object> pageList(int start, int length, String jobGroup, String jobDesc, String executorHandler) {
         // page list
         List<JobInfo> list = jobInfoDao.pageList(start, length, jobGroup, jobDesc, executorHandler);
         int list_count = jobInfoDao.pageListCount(start, length, jobGroup, jobDesc, executorHandler);
@@ -77,7 +74,7 @@ public class JobServiceImpl implements JobService {
         } catch (SchedulerException e) {
             logger.error(e.getMessage(), e);
             try {
-                jobInfoDao.delete(jobInfo.getId());
+                jobInfoDao.delete(jobInfo.getJobGroup(), jobInfo.getId());
                 JobScheduler.removeJob(qzName, qzGroup);
             } catch (SchedulerException e1) {
                 logger.error(e.getMessage(), e1);
@@ -95,7 +92,7 @@ public class JobServiceImpl implements JobService {
             return new Return<String>(Return.FAIL_CODE, "任务描述不能空");
         }
 
-        JobInfo existsJobInfo = jobInfoDao.loadById(jobInfo.getId());
+        JobInfo existsJobInfo = jobInfoDao.loadById(jobInfo.getJobGroup(), jobInfo.getId());
         if (existsJobInfo == null) {
             return new Return<String>(Return.FAIL_CODE, "任务ID不正确");
         }
@@ -120,14 +117,14 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
-    public Return<String> remove(String id) {
-        JobInfo xxlJobInfo = jobInfoDao.loadById(id);
+    public Return<String> remove(String jobGroup, String id) {
+        JobInfo xxlJobInfo = jobInfoDao.loadById(jobGroup, id);
         String group = String.valueOf(xxlJobInfo.getJobGroup());
         String name = String.valueOf(xxlJobInfo.getId());
         try {
             JobScheduler.removeJob(name, group);
-            jobInfoDao.delete(id);
-            jobLogDao.delete(id);
+            jobInfoDao.delete(jobGroup, id);
+            jobLogDao.delete(jobGroup, id);
             return Return.SUCCESS;
         } catch (SchedulerException e) {
             logger.error(e.getMessage(), e);
@@ -136,8 +133,8 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
-    public Return<String> pause(String id) {
-        JobInfo jobInfo = jobInfoDao.loadById(id);
+    public Return<String> pause(String jobGroup, String id) {
+        JobInfo jobInfo = jobInfoDao.loadById(jobGroup, id);
         String name = jobInfo.getId();
         String group = jobInfo.getJobGroup();
         try {
@@ -149,10 +146,10 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
-    public Return<String> resume(String id) {
-        JobInfo xxlJobInfo = jobInfoDao.loadById(id);
-        String group = String.valueOf(xxlJobInfo.getJobGroup());
-        String name = String.valueOf(xxlJobInfo.getId());
+    public Return<String> resume(String jobGroup, String id) {
+        JobInfo jobInfo = jobInfoDao.loadById(jobGroup, id);
+        String group = jobInfo.getJobGroup();
+        String name = jobInfo.getId();
         try {
             boolean ret = JobScheduler.resumeJob(name, group);
             return ret ? Return.SUCCESS : Return.FAIL;
@@ -161,11 +158,6 @@ public class JobServiceImpl implements JobService {
         }
     }
 
-    @Override
-    public Return<List<JobInfo>> getJobsByGroup(String jobGroup) {
-        List<JobInfo> list = jobInfoDao.getJobsByGroup(jobGroup);
-        return new Return<List<JobInfo>>(list);
-    }
 
     @Override
     public Map<String, Object> dashboardInfo() {

@@ -43,7 +43,7 @@ public class AdminBizImpl implements AdminBiz {
 
     private Return<String> callback(HandleCallbackParam handleCallbackParam) {
         // valid log item
-        JobLog log = xxlJobLogDao.load(handleCallbackParam.getLogId());
+        JobLog log = xxlJobLogDao.load(null,handleCallbackParam.getLogId());
         logger.info(">>>>>>>>> HandleCallbackParam {}-{}", handleCallbackParam.getLogId(), log);
         if (log == null) {
             return new Return<String>(Return.FAIL_CODE, "log item not found.");
@@ -55,7 +55,7 @@ public class AdminBizImpl implements AdminBiz {
         // trigger success, to trigger child job
         String callbackMsg = null;
         if (IJobHandler.SUCCESS.getCode() == handleCallbackParam.getExecuteResult().getCode()) {
-            JobInfo xxlJobInfo = xxlJobInfoDao.loadById(log.getJobId());
+            JobInfo xxlJobInfo = xxlJobInfoDao.loadById(null, log.getJobId());
 //            if (xxlJobInfo != null && StringUtils.isNotBlank(xxlJobInfo.getChildJobId())) {
 //                callbackMsg = "<br><br><span style=\"color:#00c0ef;\" > >>>>>>>>>>>" + I18nUtil.getString("jobconf_trigger_child_run") + "<<<<<<<<<<< </span><br>";
 //

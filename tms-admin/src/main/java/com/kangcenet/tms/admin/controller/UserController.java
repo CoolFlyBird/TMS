@@ -1,9 +1,11 @@
 package com.kangcenet.tms.admin.controller;
 
+import com.kangcenet.tms.admin.core.conf.JobAdminConfig;
 import com.kangcenet.tms.admin.core.model.JobGroup;
 import com.kangcenet.tms.admin.core.model.User;
 import com.kangcenet.tms.admin.core.util.MD5Util;
 import com.kangcenet.tms.admin.core.util.TokenUtil;
+import com.kangcenet.tms.admin.dao.JobGroupDao;
 import com.kangcenet.tms.admin.dao.UserDao;
 import com.kangcenet.tms.core.biz.model.Return;
 import org.slf4j.Logger;
@@ -29,6 +31,9 @@ public class UserController {
     @Autowired
     private UserDao userDao;
 
+    @Autowired
+    private JobGroupDao jobGroupDao;
+
     @ResponseBody
     @RequestMapping("/login")
     public Return login(@RequestParam Map<String, String> params) {
@@ -43,7 +48,11 @@ public class UserController {
         map.put("password", md5Password);
         User user = userDao.select(map);
         if (user == null) {
-            return new Return(Return.FAIL_CODE, "用户名或密码不正确");
+            if (username.equals(JobAdminConfig.USER)
+                    && password.equals(JobAdminConfig.PASSWORD)) {
+            } else {
+                return new Return(Return.FAIL_CODE, "用户名或密码不正确");
+            }
         }
         HashMap mapToken = new HashMap<String, String>();
         String token = TokenUtil.genToken(20);
@@ -60,7 +69,6 @@ public class UserController {
     @ResponseBody
     @RequestMapping("/create")
     public Return create(@RequestHeader(value = "Authorization", required = false) String auth, @RequestParam Map<String, String> params) {
-        logger.error("a:{}", MD5Util.MD5Encode(params.get("password"), "utf-8"));
         User admin = userDao.loadUserInfo(auth);
         if (admin == null || !admin.checkAdmin()) {
             return new Return(Return.FAIL_CODE, "管理员才能创建账号！");
@@ -68,12 +76,16 @@ public class UserController {
         String userName = params.get("user");
         String password = params.get("password");
         String email = params.get("email");
-        String role = params.get("role");
+        String role = params.get("appName");
         if (StringUtils.isEmpty(userName) || StringUtils.isEmpty(password)) {
             return new Return(Return.FAIL_CODE, "user or password is null");
         }
         if (StringUtils.isEmpty(role)) {
-            return new Return(Return.FAIL_CODE, "role is null");
+            return new Return(Return.FAIL_CODE, "appName is null");
+        }
+        JobGroup jobGroup = jobGroupDao.select(role);
+        if (jobGroup == null) {
+            return new Return(Return.FAIL_CODE, "该项目不存在");
         }
         String md5Password = MD5Util.MD5Encode(password, "utf-8");
         User user = new User();
@@ -100,7 +112,6 @@ public class UserController {
             return new Return(Return.FAIL_CODE, "user or password is null");
         }
         int a = userDao.delete(userName);
-        logger.error("user.create{}", a);
         if (a == 1) {
             return new Return(Return.SUCCESS_CODE, "success");
         }
@@ -111,7 +122,6 @@ public class UserController {
     @RequestMapping("/users")
     public Return pageList(@RequestHeader(value = "Authorization", required = false) String auth) {
         User admin = userDao.loadUserInfo(auth);
-        logger.error("loadUserInfo {}", admin);
         if (admin == null || !admin.checkAdmin()) {
             return new Return(Return.FAIL_CODE, "管理员才能查阅账号！");
         }

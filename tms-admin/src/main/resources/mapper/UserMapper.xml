@@ -19,20 +19,20 @@
     <select id="pageList" resultMap="User">
         SELECT
         <include refid="Base_Column_List"/>
-        FROM `USER` AS t
+        FROM `user` AS t
         ORDER BY t.username DESC
     </select>
 
     <select id="select" parameterType="java.util.HashMap" resultMap="User">
         SELECT
         <include refid="Base_Column_List"/>
-        FROM `USER` AS t
+        FROM `user` AS t
         WHERE t.username = #{username}
         AND t.password = #{password}
     </select>
 
     <insert id="create" parameterType="com.kangcenet.tms.admin.core.model.User">
-        INSERT INTO `USER` (
+        INSERT INTO `user` (
         `username`,
         `password`,
         `email`,
@@ -46,12 +46,12 @@
     </insert>
 
     <delete id="delete">
-		delete from `USER`
+		delete from `user`
 		WHERE username = #{user}
 	</delete>
 
     <insert id="setToken" parameterType="java.util.HashMap">
-        INSERT INTO `USER_TOKEN` (
+        INSERT INTO `user_token` (
         `token`,
         `username`,
         `expiration`
@@ -68,10 +68,10 @@
     <select id="loadUserInfo" parameterType="java.lang.String" resultMap="User">
         SELECT
         <include refid="Base_Column_List"/>
-        FROM `USER` AS t
+        FROM `user` AS t
         WHERE t.username = (
         SELECT `username`
-        FROM `USER_TOKEN`AS t2
+        FROM `user_token`AS t2
         WHERE t2.token = #{auth}
         )
     </select>

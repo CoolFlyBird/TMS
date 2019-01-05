@@ -1,5 +1,7 @@
 package com.kangcenet.tms.admin.core.model;
 
+import com.kangcenet.tms.admin.core.conf.JobAdminConfig;
+
 public class User {
     private String username;
     private String password;
@@ -39,7 +41,7 @@ public class User {
     }
 
     public boolean checkAdmin() {
-        return "ADMIN".equals(role);
+        return JobAdminConfig.USER.equals(role);
     }
 
     @Override

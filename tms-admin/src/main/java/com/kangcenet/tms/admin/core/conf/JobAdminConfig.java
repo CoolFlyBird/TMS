@@ -11,6 +11,9 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 public class JobAdminConfig implements InitializingBean{
+    public static String USER = "admin";
+    public static String PASSWORD = "kangce@0607";
+
     private static JobAdminConfig adminConfig = null;
     public static JobAdminConfig getAdminConfig() {
         return adminConfig;

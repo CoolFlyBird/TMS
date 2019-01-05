@@ -32,7 +32,7 @@ public interface JobLogDao {
                              @Param("triggerTimeEnd") Date triggerTimeEnd,
                              @Param("logStatus") int logStatus);
 
-    public JobLog load(@Param("id") int id);
+    public JobLog load(@Param("jobGroup") String jobGroup, @Param("id") int id);
 
     public int save(JobLog jobLog);
 
@@ -40,7 +40,7 @@ public interface JobLogDao {
 
     public int updateHandleInfo(JobLog jobLog);
 
-    public int delete(@Param("jobId") String jobId);
+    public int delete(@Param("jobGroup") String jobGroup, @Param("jobId") String jobId);
 
     public int triggerCountByHandleCode(@Param("handleCode") int handleCode);
 

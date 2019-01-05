@@ -30,7 +30,7 @@
     <select id="pageList" parameterType="java.util.HashMap" resultMap="JobInfo">
         SELECT
         <include refid="Base_Column_List"/>
-        FROM JOB_QRTZ_TRIGGER_INFO AS t
+        FROM job_qrtz_trigger_info AS t
         <trim prefix="WHERE" prefixOverrides="AND | OR">
             <if test="jobGroup != null and jobGroup != ''">
                 AND t.job_group = #{jobGroup}
@@ -48,7 +48,7 @@
 
     <select id="pageListCount" parameterType="java.util.HashMap" resultType="int">
         SELECT count(1)
-        FROM JOB_QRTZ_TRIGGER_INFO AS t
+        FROM job_qrtz_trigger_info AS t
         <trim prefix="WHERE" prefixOverrides="AND | OR">
             <if test="jobGroup != null and jobGroup != ''">
                 AND t.job_group = #{jobGroup}
@@ -66,8 +66,13 @@
     <select id="loadById" parameterType="java.util.HashMap" resultMap="JobInfo">
         SELECT
         <include refid="Base_Column_List"/>
-        FROM JOB_QRTZ_TRIGGER_INFO AS t
+        FROM job_qrtz_trigger_info AS t
         WHERE t.id = #{id}
+        <trim>
+            <if test="jobGroup != null and jobGroup != ''">
+                AND t.job_group = #{jobGroup}
+            </if>
+        </trim>
     </select>
 
     <insert id="save" parameterType="com.kangcenet.tms.admin.core.model.JobInfo" useGeneratedKeys="true"
@@ -78,7 +83,7 @@
 
 
     <update id="update" parameterType="com.kangcenet.tms.admin.core.model.JobInfo">
-        UPDATE JOB_QRTZ_TRIGGER_INFO
+        UPDATE job_qrtz_trigger_info
         SET `job_group`        = #{jobGroup},
             `job_cron`         = #{jobCron},
             `job_desc`         = #{jobDesc},
@@ -90,20 +95,18 @@
 
     <delete id="delete" parameterType="java.util.HashMap">
         DELETE
-        FROM JOB_QRTZ_TRIGGER_INFO
+        FROM job_qrtz_trigger_info
         WHERE id = #{id}
+        <trim>
+            <if test="jobGroup != null and jobGroup != ''">
+                AND t.job_group = #{jobGroup}
+            </if>
+        </trim>
     </delete>
-
-    <select id="getJobsByGroup" parameterType="java.util.HashMap" resultMap="JobInfo">
-        SELECT
-        <include refid="Base_Column_List"/>
-        FROM JOB_QRTZ_TRIGGER_INFO AS t
-        WHERE t.job_group = #{jobGroup}
-    </select>
 
     <select id="findAllCount" resultType="int">
         SELECT count(1)
-        FROM JOB_QRTZ_TRIGGER_INFO
+        FROM job_qrtz_trigger_info
     </select>
 
 </mapper>

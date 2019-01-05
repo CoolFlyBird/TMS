@@ -1,9 +1,11 @@
 package com.kangcenet.tms.admin.controller;
 
 import com.kangcenet.tms.admin.core.model.JobLog;
+import com.kangcenet.tms.admin.core.model.User;
 import com.kangcenet.tms.admin.core.schedule.JobScheduler;
 import com.kangcenet.tms.admin.dao.JobInfoDao;
 import com.kangcenet.tms.admin.dao.JobLogDao;
+import com.kangcenet.tms.admin.dao.UserDao;
 import com.kangcenet.tms.core.biz.ExecutorBiz;
 import com.kangcenet.tms.core.biz.model.LogResult;
 import com.kangcenet.tms.core.biz.model.Return;
@@ -11,7 +13,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -27,15 +31,24 @@ import java.util.Map;
 @RequestMapping("/joblog")
 public class JobLogController {
     private static Logger logger = LoggerFactory.getLogger(JobLogController.class);
+
+    @Autowired
+    private UserDao userDao;
     @Resource
     public JobLogDao jobLogDao;
 
     @RequestMapping("/pageList")
     @ResponseBody
-    public Map<String, Object> pageList(@RequestParam(required = false, defaultValue = "0") int start,
-                                        @RequestParam(required = false, defaultValue = "10") int length,
-                                        @RequestParam(required = false, defaultValue = "1") int logStatus,
-                                        String jobGroup, String jobId, String filterTime) {
+    public Return pageList(
+            @RequestHeader(value = "Authorization", required = false) String auth,
+            @RequestParam(required = false, defaultValue = "0") int start,
+            @RequestParam(required = false, defaultValue = "10") int length,
+            @RequestParam(required = false, defaultValue = "1") int logStatus,
+            String jobId, String filterTime) {
+        User user = userDao.loadUserInfo(auth);
+        if (user == null || user.getRole() == null) {
+            return new Return(Return.FAIL_CODE, "该账号未绑定项目！");
+        }
         // parse param
         Date triggerTimeStart = null;
         Date triggerTimeEnd = null;
@@ -49,24 +62,26 @@ public class JobLogController {
                 }
             }
         }
-
         // page query
-        List<JobLog> list = jobLogDao.pageList(start, length, jobGroup, jobId, triggerTimeStart, triggerTimeEnd, logStatus);
-        int list_count = jobLogDao.pageListCount(start, length, jobGroup, jobId, triggerTimeStart, triggerTimeEnd, logStatus);
-
+        List<JobLog> list = jobLogDao.pageList(start, length, user.getRole(), jobId, triggerTimeStart, triggerTimeEnd, logStatus);
+        int list_count = jobLogDao.pageListCount(start, length, user.getRole(), jobId, triggerTimeStart, triggerTimeEnd, logStatus);
         // package result
         Map<String, Object> maps = new HashMap<String, Object>();
         maps.put("recordsTotal", list_count);        // 总记录数
         maps.put("recordsFiltered", list_count);    // 过滤后的总记录数
         maps.put("data", list);                    // 分页列表
-        return maps;
+        return new Return(maps);
     }
 
     @RequestMapping("/logDetailPage")
     @ResponseBody
-    public Return logDetailPage(int id) {
+    public Return logDetailPage(@RequestHeader(value = "Authorization", required = false) String auth, int id) {
+        User user = userDao.loadUserInfo(auth);
+        if (user == null || user.getRole() == null) {
+            return new Return(Return.FAIL_CODE, "该账号未绑定项目！");
+        }
         // base check
-        JobLog jobLog = jobLogDao.load(id);
+        JobLog jobLog = jobLogDao.load(user.getRole(), id);
         if (jobLog == null) {
             return new Return(Return.FAIL_CODE, "id无效");
         }
@@ -81,13 +96,17 @@ public class JobLogController {
 
     @RequestMapping("/logDetailCat")
     @ResponseBody
-    public Return<LogResult> logDetailCat(String executorAddress, long triggerTime, int logId, int fromLineNum) {
+    public Return<LogResult> logDetailCat(@RequestHeader(value = "Authorization", required = false) String auth, String executorAddress, long triggerTime, int logId, int fromLineNum) {
+        User user = userDao.loadUserInfo(auth);
+        if (user == null || user.getRole() == null) {
+            return new Return(Return.FAIL_CODE, "该账号未绑定项目！");
+        }
         try {
             ExecutorBiz executorBiz = JobScheduler.getExecutorBiz(executorAddress);
             Return<LogResult> logResult = executorBiz.log(triggerTime, logId, fromLineNum);
             // is end
             if (logResult.getData() != null && logResult.getData().getFromLineNum() > logResult.getData().getToLineNum()) {
-                JobLog jobLog = jobLogDao.load(logId);
+                JobLog jobLog = jobLogDao.load(user.getRole(), logId);
                 if (jobLog.getHandleCode() > 0) {
                     logResult.getData().setEnd(true);
                 }
@@ -101,7 +120,11 @@ public class JobLogController {
 
     @RequestMapping("/clearLog")
     @ResponseBody
-    public Return<String> clearLog(String jobGroup, String jobId, int type) {
+    public Return<String> clearLog(@RequestHeader(value = "Authorization", required = false) String auth, String jobId, int type) {
+        User user = userDao.loadUserInfo(auth);
+        if (user == null || user.getRole() == null) {
+            return new Return(Return.FAIL_CODE, "该账号未绑定项目！");
+        }
         Date clearBeforeTime = null;
         int clearBeforeNum = 0;
         if (type == 1) {
@@ -123,9 +146,9 @@ public class JobLogController {
         } else if (type == 9) {
             clearBeforeNum = 0;            // 清理所有日志数据
         } else {
-            return new Return<String>(Return.FAIL_CODE, "type无效输入");
+            return new Return(Return.FAIL_CODE, "type无效输入");
         }
-        jobLogDao.clearLog(jobGroup, jobId, clearBeforeTime, clearBeforeNum);
+        jobLogDao.clearLog(user.getRole(), jobId, clearBeforeTime, clearBeforeNum);
         return Return.SUCCESS;
     }
 }
