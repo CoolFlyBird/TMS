@@ -11,7 +11,7 @@
 
     <sql id="Base_Column_List">
 		t.username,
-		t.password,
+-- 		t.password,
 		t.email,
 		t.role
 	</sql>

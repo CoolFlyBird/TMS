@@ -1,9 +1,9 @@
 package com.kangcenet.tms.admin.controller;
 
+import com.kangcenet.tms.admin.core.model.JobExecInfo;
 import com.kangcenet.tms.admin.core.model.JobLog;
 import com.kangcenet.tms.admin.core.model.User;
 import com.kangcenet.tms.admin.core.schedule.JobScheduler;
-import com.kangcenet.tms.admin.dao.JobInfoDao;
 import com.kangcenet.tms.admin.dao.JobLogDao;
 import com.kangcenet.tms.admin.dao.UserDao;
 import com.kangcenet.tms.core.biz.ExecutorBiz;
@@ -71,6 +71,24 @@ public class JobLogController {
         maps.put("recordsFiltered", list_count);    // 过滤后的总记录数
         maps.put("data", list);                    // 分页列表
         return new Return(maps);
+    }
+
+    @RequestMapping("/jobExecInfo")
+    @ResponseBody
+    public Return jobExecInfo(
+            @RequestHeader(value = "Authorization", required = false) String auth, String jobId) {
+        User user = userDao.loadUserInfo(auth);
+        if (user == null || user.getRole() == null) {
+            return new Return(Return.FAIL_CODE, "该账号未绑定项目！");
+        }
+        JobExecInfo jobExecInfo = jobLogDao.jobExecCount(user.getRole(), jobId);
+//        // package result
+//        Map<String, Object> maps = new HashMap<String, Object>();
+//        maps.put("success", success);        // 成功数
+//        maps.put("fail", fail);              // 失败数
+//        maps.put("unHandle", unHandle);      // 未处理
+//        maps.put("total", total);            // 总记录数
+        return new Return(jobExecInfo);
     }
 
     @RequestMapping("/logDetailPage")

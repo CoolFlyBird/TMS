@@ -22,6 +22,13 @@
         <result column="handle_msg" property="handleMsg"/>
     </resultMap>
 
+    <resultMap id="JobExecInfo" type="com.kangcenet.tms.admin.core.model.JobExecInfo">
+        <result column="total" property="total"/>
+        <result column="success" property="success"/>
+        <result column="fail" property="fail"/>
+        <result column="unHandle" property="unHandle"/>
+    </resultMap>
+
     <sql id="Base_Column_List">
 		t.id,
 		t.job_group,
@@ -69,7 +76,7 @@
             </if>
         </trim>
         ORDER BY id DESC
-        LIMIT #{offset}, #{pagesize}
+        LIMIT ${(page-1)*limit}, ${limit}
     </select>
 
     <select id="pageListCount" resultType="int">
@@ -100,6 +107,23 @@
             <if test="logStatus == 3">
                 AND t.trigger_code = 200
                 AND t.handle_code = 0
+            </if>
+        </trim>
+    </select>
+
+    <select id="jobExecCount" resultMap="JobExecInfo">
+        SELECT
+        count(*) as total,
+        count(if(t.handle_code = 200, TRUE, null)) as success,
+        count(if(t.trigger_code not in (0,200) or t.handle_code NOT IN (0, 200), TRUE, null)) as fail,
+        count(if(t.trigger_code = 200 AND t.handle_code = 0, TRUE, null)) as unHandle
+        FROM job_qrtz_trigger_log AS t
+        <trim prefix="WHERE" prefixOverrides="AND | OR">
+            <if test="jobGroup != null and jobGroup != ''">
+                AND t.job_group = #{jobGroup}
+            </if>
+            <if test="jobId != null and jobId != ''">
+                AND t.job_id = #{jobId}
             </if>
         </trim>
     </select>

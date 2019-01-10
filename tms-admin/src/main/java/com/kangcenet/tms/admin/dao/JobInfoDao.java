@@ -12,14 +12,14 @@ import java.util.List;
  */
 public interface JobInfoDao {
 
-    public List<JobInfo> pageList(@Param("offset") int offset,
-                                  @Param("pagesize") int pagesize,
+    public List<JobInfo> pageList(@Param("page") int page,
+                                  @Param("limit") int limit,
                                   @Param("jobGroup") String jobGroup,
                                   @Param("jobDesc") String jobDesc,
                                   @Param("executorHandler") String executorHandler);
 
-    public int pageListCount(@Param("offset") int offset,
-                             @Param("pagesize") int pagesize,
+    public int pageListCount(@Param("page") int page,
+                             @Param("limit") int limit,
                              @Param("jobGroup") String jobGroup,
                              @Param("jobDesc") String jobDesc,
                              @Param("executorHandler") String executorHandler);

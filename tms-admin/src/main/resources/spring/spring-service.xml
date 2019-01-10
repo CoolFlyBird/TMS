@@ -2,13 +2,13 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
-       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:tx="http://www.springframework.org/schema/tx" xmlns:mvc="http://www.springframework.org/schema/mvc"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
 	http://www.springframework.org/schema/beans/spring-beans.xsd
 	http://www.springframework.org/schema/context
 	http://www.springframework.org/schema/context/spring-context.xsd
 	http://www.springframework.org/schema/tx
-	http://www.springframework.org/schema/tx/spring-tx.xsd">
+	http://www.springframework.org/schema/tx/spring-tx.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
     <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="fileEncoding" value="utf-8"/>
@@ -49,15 +49,63 @@
         <property name="accessToken" value="${job.accessToken}"/>
     </bean>
 
-    <!-- ********************************* 基础配置 ********************************* -->
-
-    <!-- 配置01、JobHandler 扫描路径 -->
+    <!-- JobHandler 扫描路径 -->
     <context:component-scan base-package="com.kangcenet.tms.admin.jobhandler"/>
     <!-- 配置02、执行器 -->
     <bean id="jobExecutor" class="com.kangcenet.tms.core.executor.JobExecutor" init-method="start"
           destroy-method="destroy">
     </bean>
 
-
     <bean id="triggerCallbackThread" class="com.kangcenet.tms.core.thread.TriggerCallbackThread"/>
+
+    <mvc:cors>
+        <mvc:mapping path="/**/**"
+                     allowed-origins="*"
+                     allowed-methods="POST,GET,OPTIONS,DELETE,PUT"
+                     allowed-headers="Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With"
+                     allow-credentials="true"/>
+    </mvc:cors>
+
+    <!--<bean id="mappingJacksonHttpMessageConverter"-->
+          <!--class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">-->
+        <!--<property name="supportedMediaTypes">-->
+            <!--<list>-->
+                <!--<value>application/json;charset=UTF-8</value>-->
+            <!--</list>-->
+        <!--</property>-->
+    <!--</bean>-->
+
+    <!--&lt;!&ndash; 启动SpringMVC的注解功能，完成请求和注解POJO的映射 &ndash;&gt;-->
+    <!--<bean-->
+            <!--class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">-->
+        <!--<property name="messageConverters">-->
+            <!--<list>-->
+                <!--<ref bean="mappingJacksonHttpMessageConverter"/>-->
+                <!--<bean-->
+                        <!--class="org.springframework.http.converter.ByteArrayHttpMessageConverter"/>-->
+                <!--<bean-->
+                        <!--class="org.springframework.http.converter.StringHttpMessageConverter">-->
+                    <!--<property name="supportedMediaTypes">-->
+                        <!--<list>-->
+                            <!--<value>application/json;charset=UTF-8</value>-->
+                        <!--</list>-->
+                    <!--</property>-->
+                <!--</bean>-->
+                <!--<bean class="org.springframework.http.converter.FormHttpMessageConverter"/>-->
+                <!--<bean-->
+                        <!--class="org.springframework.http.converter.xml.SourceHttpMessageConverter"/>-->
+
+                <!--<bean class="org.springframework.http.converter.ResourceHttpMessageConverter"></bean>-->
+                <!--<bean class="org.springframework.http.converter.ByteArrayHttpMessageConverter"></bean>-->
+                <!--<bean-->
+                        <!--class="org.springframework.http.converter.xml.XmlAwareFormHttpMessageConverter"></bean>-->
+                <!--<bean-->
+                        <!--class="org.springframework.http.converter.xml.Jaxb2RootElementHttpMessageConverter"></bean>-->
+                <!--<bean-->
+                        <!--class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter"></bean>-->
+                <!--&lt;!&ndash; JSON转换器 &ndash;&gt;-->
+            <!--</list>-->
+        <!--</property>-->
+    <!--</bean>-->
+
 </beans>

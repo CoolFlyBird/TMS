@@ -12,12 +12,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,21 +33,24 @@ public class UserController {
     @Autowired
     private JobGroupDao jobGroupDao;
 
+
     @ResponseBody
-    @RequestMapping("/login")
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
     public Return login(@RequestParam Map<String, String> params) {
+        logger.error("params:{}", params);
         String username = params.get("username");
         String password = params.get("password");
         if (StringUtils.isEmpty(username) || StringUtils.isEmpty(password)) {
-            return new Return(Return.FAIL.getCode(), "user or password is null");
+            return new Return(Return.FAIL.getCode(), "username or password is null");
         }
         String md5Password = MD5Util.MD5Encode(password, "utf-8");
         HashMap map = new HashMap<String, String>();
         map.put("username", username);
         map.put("password", md5Password);
         User user = userDao.select(map);
-        logger.error("username:{},md5Password{}", username, md5Password);
+        logger.error("username:{},md5Password:{}", username, md5Password);
         if (user == null) {
+            logger.error("username:{},password:{}|{},{}", JobAdminConfig.USER, JobAdminConfig.PASSWORD, username, password);
             if (username.equals(JobAdminConfig.USER)
                     && password.equals(JobAdminConfig.PASSWORD)) {
             } else {
@@ -127,6 +129,15 @@ public class UserController {
             return new Return(Return.FAIL_CODE, "管理员才能查阅账号！");
         }
         List<User> users = userDao.pageList();
+        User user = null;
+        for (User u : users) {
+            if (u.checkAdmin()) {
+                user = u;
+            }
+        }
+        if (user != null) {
+            users.remove(user);
+        }
         return new Return(users);
     }
 }
