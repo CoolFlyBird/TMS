@@ -64,7 +64,7 @@ public class TriggerCallbackThread implements ApplicationContextAware {
         logger.error("TriggerCallbackThread");
         // valid
 //        if (JobExecutor.getAdminBizList() == null) {
-//            logger.warn(">>>>>>>>>>> xxl-job, executor callback config fail, adminAddresses is null.");
+//            logger.warn(">>>>>>>>>>> job, executor callback config fail, adminAddresses is null.");
 //            return;
 //        }
 
@@ -131,7 +131,7 @@ public class TriggerCallbackThread implements ApplicationContextAware {
                         logger.warn(">>>>>>>>>>> xxl-job, executor retry callback thread interrupted, error msg:{}", e.getMessage());
                     }
                 }
-                logger.info(">>>>>>>>>>> xxl-job, executor retry callback thread destory.");
+                logger.info(">>>>>>>>>>> job, executor retry callback thread destory.");
             }
         });
         triggerRetryCallbackThread.setDaemon(true);

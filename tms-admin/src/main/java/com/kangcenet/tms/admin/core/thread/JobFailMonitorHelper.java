@@ -79,7 +79,7 @@ public class JobFailMonitorHelper {
 //										JobTriggerPoolHelper.trigger(log.getJobId(), TriggerTypeEnum.RETRY, (log.getExecutorFailRetryCount()-1), log.getExecutorShardingParam(), null);
 //										String retryMsg = "<br><br><span style=\"color:#F39C12;\" > >>>>>>>>>>>"+ I18nUtil.getString("jobconf_trigger_type_retry") +"<<<<<<<<<<< </span><br>";
 //										log.setTriggerMsg(log.getTriggerMsg() + retryMsg);
-//										XxlJobDynamicScheduler.xxlJobLogDao.updateTriggerInfo(log);
+//										JobDynamicScheduler.jobLogDao.updateTriggerInfo(log);
 //									}
                                         // 2、fail alarm
                                         failAlarm(info, log);

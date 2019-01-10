@@ -47,7 +47,7 @@ public class JobExecutor implements ApplicationContextAware {
     private static ConcurrentHashMap<String, IJobHandler> jobHandlerRepository = new ConcurrentHashMap<String, IJobHandler>();
 
     public static IJobHandler registerJobHandler(String name, IJobHandler jobHandler) {
-//        logger.info(">>>>>>>>>>> xxl-job register jobhandler success, name:{}, jobHandler:{}", name, jobHandler);
+//        logger.info(">>>>>>>>>>> job register jobhandler success, name:{}, jobHandler:{}", name, jobHandler);
         return jobHandlerRepository.put(name, jobHandler);
     }
 
@@ -83,7 +83,7 @@ public class JobExecutor implements ApplicationContextAware {
     public static JobThread registerJobThread(String jobId, IJobHandler handler, String removeOldReason) {
         JobThread newJobThread = new JobThread(jobId, handler);
         newJobThread.start();
-//        logger.info(">>>>>>>>>>> xxl-job regist JobThread success, jobId:{}, handler:{}", new Object[]{jobId, handler});
+//        logger.info(">>>>>>>>>>> job regist JobThread success, jobId:{}, handler:{}", new Object[]{jobId, handler});
         JobThread oldJobThread = JobThreadRepository.put(jobId, newJobThread);    // putIfAbsent | oh my god, map's put method return the old value!!!
         if (oldJobThread != null) {
             oldJobThread.toStop(removeOldReason);

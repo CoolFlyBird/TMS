@@ -32,7 +32,9 @@ public class JobGroupController {
     @RequestMapping("/pageList")
     public Return pageList(@RequestHeader(value = "Authorization", required = false) String auth) {
         User admin = userDao.loadUserInfo(auth);
-        if (admin == null || !admin.checkAdmin()) {
+        if (admin == null ) {
+            return new Return(Return.UN_LOGIN, "请先登录！");
+        } else if ( !admin.checkAdmin()) {
             return new Return(Return.FAIL_CODE, "管理员才能查看项目！");
         }
         List<JobGroup> jobGroupList = jobGroupDao.pageList();
@@ -43,7 +45,9 @@ public class JobGroupController {
     @RequestMapping("/select")
     public Return select(@RequestHeader(value = "Authorization", required = false) String auth, @RequestParam Map<String, String> params) {
         User admin = userDao.loadUserInfo(auth);
-        if (admin == null || !admin.checkAdmin()) {
+        if (admin == null) {
+            return new Return(Return.UN_LOGIN, "请先登录！");
+        } else if (!admin.checkAdmin()) {
             return new Return(Return.FAIL_CODE, "管理员才能查看项目！");
         }
         String appName = params.get("appName");
@@ -58,7 +62,9 @@ public class JobGroupController {
     @RequestMapping("/create")
     public Return create(@RequestHeader(value = "Authorization", required = false) String auth, @RequestParam Map<String, String> params) {
         User admin = userDao.loadUserInfo(auth);
-        if (admin == null || !admin.checkAdmin()) {
+        if (admin == null) {
+            return new Return(Return.UN_LOGIN, "请先登录！");
+        } else if (!admin.checkAdmin()) {
             logger.error("admin:{},{}", JobAdminConfig.USER, admin.getRole());
             return new Return(Return.FAIL_CODE, "管理员才能创建项目！");
         }
@@ -81,7 +87,9 @@ public class JobGroupController {
     @RequestMapping("/delete")
     public Return delete(@RequestHeader(value = "Authorization", required = false) String auth, @RequestParam Map<String, String> params) {
         User admin = userDao.loadUserInfo(auth);
-        if (admin == null || !admin.checkAdmin()) {
+        if (admin == null ) {
+            return new Return(Return.UN_LOGIN, "请先登录！");
+        } else if ( !admin.checkAdmin()) {
             return new Return(Return.FAIL_CODE, "管理员才能删除项目！");
         }
         String appName = params.get("appName");

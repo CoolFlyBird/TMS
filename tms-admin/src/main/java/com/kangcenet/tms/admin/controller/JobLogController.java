@@ -46,7 +46,9 @@ public class JobLogController {
             @RequestParam(required = false, defaultValue = "1") int logStatus,
             String jobId, String filterTime) {
         User user = userDao.loadUserInfo(auth);
-        if (user == null || user.getRole() == null) {
+        if (user == null) {
+            return new Return(Return.UN_LOGIN, "请先登录！");
+        } else if (user.getRole() == null) {
             return new Return(Return.FAIL_CODE, "该账号未绑定项目！");
         }
         // parse param
@@ -78,16 +80,12 @@ public class JobLogController {
     public Return jobExecInfo(
             @RequestHeader(value = "Authorization", required = false) String auth, String jobId) {
         User user = userDao.loadUserInfo(auth);
-        if (user == null || user.getRole() == null) {
+        if (user == null) {
+            return new Return(Return.UN_LOGIN, "请先登录！");
+        } else if (user.getRole() == null) {
             return new Return(Return.FAIL_CODE, "该账号未绑定项目！");
         }
         JobExecInfo jobExecInfo = jobLogDao.jobExecCount(user.getRole(), jobId);
-//        // package result
-//        Map<String, Object> maps = new HashMap<String, Object>();
-//        maps.put("success", success);        // 成功数
-//        maps.put("fail", fail);              // 失败数
-//        maps.put("unHandle", unHandle);      // 未处理
-//        maps.put("total", total);            // 总记录数
         return new Return(jobExecInfo);
     }
 
@@ -95,7 +93,9 @@ public class JobLogController {
     @ResponseBody
     public Return logDetailPage(@RequestHeader(value = "Authorization", required = false) String auth, int id) {
         User user = userDao.loadUserInfo(auth);
-        if (user == null || user.getRole() == null) {
+        if (user == null) {
+            return new Return(Return.UN_LOGIN, "请先登录！");
+        } else if (user.getRole() == null) {
             return new Return(Return.FAIL_CODE, "该账号未绑定项目！");
         }
         // base check
@@ -116,11 +116,14 @@ public class JobLogController {
     @ResponseBody
     public Return<LogResult> logDetailCat(@RequestHeader(value = "Authorization", required = false) String auth, String executorAddress, long triggerTime, int logId, int fromLineNum) {
         User user = userDao.loadUserInfo(auth);
-        if (user == null || user.getRole() == null) {
+        if (user == null) {
+            return new Return(Return.UN_LOGIN, "请先登录！");
+        } else if (user.getRole() == null) {
             return new Return(Return.FAIL_CODE, "该账号未绑定项目！");
         }
         try {
-            ExecutorBiz executorBiz = JobScheduler.getExecutorBiz(executorAddress);
+//            ExecutorBiz executorBiz = JobScheduler.getExecutorBiz(executorAddress);
+            ExecutorBiz executorBiz = JobScheduler.getExecutorBiz("address");
             Return<LogResult> logResult = executorBiz.log(triggerTime, logId, fromLineNum);
             // is end
             if (logResult.getData() != null && logResult.getData().getFromLineNum() > logResult.getData().getToLineNum()) {
@@ -140,7 +143,9 @@ public class JobLogController {
     @ResponseBody
     public Return<String> clearLog(@RequestHeader(value = "Authorization", required = false) String auth, String jobId, int type) {
         User user = userDao.loadUserInfo(auth);
-        if (user == null || user.getRole() == null) {
+        if (user == null) {
+            return new Return(Return.UN_LOGIN, "请先登录！");
+        } else if (user.getRole() == null) {
             return new Return(Return.FAIL_CODE, "该账号未绑定项目！");
         }
         Date clearBeforeTime = null;

@@ -37,7 +37,9 @@ public class JobInfoController {
             @RequestParam(required = false, defaultValue = "10") int length,
             String jobDesc, String executorHandler) {
         User user = userDao.loadUserInfo(auth);
-        if (user == null || user.getRole() == null) {
+        if (user == null) {
+            return new Return(Return.UN_LOGIN, "请先登录！");
+        } else if (user.getRole() == null) {
             return new Return(Return.FAIL_CODE, "该账号未绑定项目！");
         }
         Map<String, Object> map = jobService.pageList(start, length, user.getRole(), jobDesc, executorHandler);
@@ -51,7 +53,9 @@ public class JobInfoController {
             @RequestHeader(value = "Authorization", required = false) String auth,
             @RequestParam Map<String, String> params) {
         User user = userDao.loadUserInfo(auth);
-        if (user == null || user.getRole() == null) {
+        if (user == null) {
+            return new Return(Return.UN_LOGIN, "请先登录！");
+        } else if (user.getRole() == null) {
             return new Return(Return.FAIL_CODE, "该账号未绑定项目！");
         }
         JobInfo jobInfo = null;
@@ -73,7 +77,9 @@ public class JobInfoController {
             @RequestHeader(value = "Authorization", required = false) String auth,
             @RequestParam Map<String, String> params) {
         User user = userDao.loadUserInfo(auth);
-        if (user == null || user.getRole() == null) {
+        if (user == null) {
+            return new Return(Return.UN_LOGIN, "请先登录！");
+        } else if (user.getRole() == null) {
             return new Return(Return.FAIL_CODE, "该账号未绑定项目！");
         }
         JobInfo jobInfo = null;
@@ -92,7 +98,9 @@ public class JobInfoController {
             @RequestHeader(value = "Authorization", required = false) String auth,
             @RequestParam Map<String, String> params) {
         User user = userDao.loadUserInfo(auth);
-        if (user == null || user.getRole() == null) {
+        if (user == null) {
+            return new Return(Return.UN_LOGIN, "请先登录！");
+        } else if (user.getRole() == null) {
             return new Return(Return.FAIL_CODE, "该账号未绑定项目！");
         }
         String id = params.get("id");
@@ -105,7 +113,9 @@ public class JobInfoController {
             @RequestHeader(value = "Authorization", required = false) String auth,
             @RequestParam Map<String, String> params) {
         User user = userDao.loadUserInfo(auth);
-        if (user == null || user.getRole() == null) {
+        if (user == null) {
+            return new Return(Return.UN_LOGIN, "请先登录！");
+        } else if (user.getRole() == null) {
             return new Return(Return.FAIL_CODE, "该账号未绑定项目！");
         }
         String id = params.get("id");
@@ -118,27 +128,14 @@ public class JobInfoController {
             @RequestHeader(value = "Authorization", required = false) String auth,
             @RequestParam Map<String, String> params) {
         User user = userDao.loadUserInfo(auth);
-        if (user == null || user.getRole() == null) {
+        if (user == null) {
+            return new Return(Return.UN_LOGIN, "请先登录！");
+        } else if (user.getRole() == null) {
             return new Return(Return.FAIL_CODE, "该账号未绑定项目！");
         }
         String id = params.get("id");
         return jobService.resume(user.getRole(), id);
     }
-
-//    @RequestMapping("/dashboard")
-//    @ResponseBody
-//    public Return<String> dashboardInfo() {
-//        Map<String, Object> dashboardMap = jobService.dashboardInfo();
-//        return new Return(dashboardMap);
-//    }
-//
-//    @RequestMapping("/chartInfo")
-//    @ResponseBody
-//    public Return<Map<String, Object>> chartInfo(Date startDate, Date endDate) {
-//        Return<Map<String, Object>> chartInfo = jobService.chartInfo(startDate, endDate);
-//        return chartInfo;
-//    }
-
 
     private JobInfo parseJobInfo(Map<String, String> params) throws Exception {
         JobInfo jobInfo = new JobInfo();
@@ -154,6 +151,7 @@ public class JobInfoController {
         String command = params.get("command");//api/脚本命令
 
         String id = params.get("id");
+        String sendMail = params.get("sendMail");
 
         jobInfo.setId(id);
         jobInfo.setJobDesc(desc);
@@ -161,6 +159,7 @@ public class JobInfoController {
         jobInfo.setJobCron(cron);
         jobInfo.setAddress(address);
         jobInfo.setCommand(command);
+        jobInfo.setSendMail(sendMail);
         return jobInfo;
     }
 }

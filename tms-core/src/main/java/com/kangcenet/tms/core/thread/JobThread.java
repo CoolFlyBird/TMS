@@ -133,7 +133,7 @@ public class JobThread extends Thread {
                 e.printStackTrace(new PrintWriter(stringWriter));
                 String errorMsg = stringWriter.toString();
                 executeResult = new Return<String>(Return.FAIL_CODE, errorMsg);
-                JobLogger.log("<br>----------- JobThread Exception:" + errorMsg + "<br>----------- xxl-job job execute end(error) -----------");
+                JobLogger.log("<br>----------- JobThread Exception:" + errorMsg + "<br>----------- job job execute end(error) -----------");
             } finally {
 //                System.err.println("finally:" + executeResult);
                 if (triggerParam != null) {

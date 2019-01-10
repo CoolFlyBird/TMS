@@ -37,28 +37,17 @@ public class JobScheduler implements ApplicationContextAware {
     //    // dao
     public static JobLogDao jobLogDao;
     public static JobInfoDao jobInfoDao;
-//    public static XxlJobRegistryDao xxlJobRegistryDao;
-//    public static XxlJobGroupDao xxlJobGroupDao;
-//    public static AdminBiz adminBiz;
 
 
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         JobScheduler.jobLogDao = applicationContext.getBean(JobLogDao.class);
         JobScheduler.jobInfoDao = applicationContext.getBean(JobInfoDao.class);
-//        XxlJobDynamicScheduler.xxlJobRegistryDao = applicationContext.getBean(XxlJobRegistryDao.class);
-//        XxlJobDynamicScheduler.xxlJobGroupDao = applicationContext.getBean(XxlJobGroupDao.class);
-//        XxlJobDynamicScheduler.adminBiz = applicationContext.getBean(AdminBiz.class);
     }
 
     public void init() throws Exception {
-//        // admin registry monitor run
-//        JobRegistryMonitorHelper.getInstance().start();
-//        // admin monitor run
+
         TriggerCallbackThread.getInstance().start();
         JobFailMonitorHelper.getInstance().start();
-//        // admin-server(spring-mvc)
-//        NetComServerFactory.putService(AdminBiz.class, XxlJobDynamicScheduler.adminBiz);
-//        NetComServerFactory.setAccessToken(accessToken);
         // valid
         Assert.notNull(scheduler, "quartz scheduler is null");
     }

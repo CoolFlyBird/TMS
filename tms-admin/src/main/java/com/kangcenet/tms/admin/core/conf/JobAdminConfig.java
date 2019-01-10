@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * xxl-job config
+ * job config
  *
  * @author xuxueli 2017-04-28
  */

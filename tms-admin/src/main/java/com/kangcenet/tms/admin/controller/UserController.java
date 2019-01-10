@@ -73,7 +73,9 @@ public class UserController {
     @RequestMapping("/create")
     public Return create(@RequestHeader(value = "Authorization", required = false) String auth, @RequestParam Map<String, String> params) {
         User admin = userDao.loadUserInfo(auth);
-        if (admin == null || !admin.checkAdmin()) {
+        if (admin == null) {
+            return new Return(Return.UN_LOGIN, "请先登录！");
+        } else if (!admin.checkAdmin()) {
             return new Return(Return.FAIL_CODE, "管理员才能创建账号！");
         }
         String userName = params.get("user");
@@ -107,7 +109,9 @@ public class UserController {
     @RequestMapping("/delete")
     public Return delete(@RequestHeader(value = "Authorization", required = false) String auth, @RequestParam Map<String, String> params) {
         User admin = userDao.loadUserInfo(auth);
-        if (admin == null || !admin.checkAdmin()) {
+        if (admin == null) {
+            return new Return(Return.UN_LOGIN, "请先登录！");
+        } else if (!admin.checkAdmin()) {
             return new Return(Return.FAIL_CODE, "管理员才能删除账号！");
         }
         String userName = params.get("user");
@@ -125,7 +129,9 @@ public class UserController {
     @RequestMapping("/users")
     public Return pageList(@RequestHeader(value = "Authorization", required = false) String auth) {
         User admin = userDao.loadUserInfo(auth);
-        if (admin == null || !admin.checkAdmin()) {
+        if (admin == null) {
+            return new Return(Return.UN_LOGIN, "请先登录！");
+        } else if (!admin.checkAdmin()) {
             return new Return(Return.FAIL_CODE, "管理员才能查阅账号！");
         }
         List<User> users = userDao.pageList();

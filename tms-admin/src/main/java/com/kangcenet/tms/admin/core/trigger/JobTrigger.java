@@ -16,7 +16,6 @@ public class JobTrigger {
         if (jobInfo == null) {
             return;
         }
-//        XxlJobGroup group = XxlJobDynamicScheduler.xxlJobGroupDao.load(jobInfo.getJobGroup());
         processTrigger(jobInfo);
     }
 

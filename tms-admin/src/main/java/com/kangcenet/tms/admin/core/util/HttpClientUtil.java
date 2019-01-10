@@ -1,6 +1,5 @@
 package com.kangcenet.tms.admin.core.util;
 
-import com.kangcenet.tms.admin.service.impl.JobServiceImpl;
 import com.kangcenet.tms.core.biz.model.Return;
 import okhttp3.*;
 import org.slf4j.Logger;
